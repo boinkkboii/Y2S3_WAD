@@ -64,3 +64,9 @@ yarn-error.log
 
 # testing
 /coverage
+
+# Ignore local package references
+*.tgz
+*.tar.gz
+*.zip
+packages/

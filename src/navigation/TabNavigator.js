@@ -1,20 +1,103 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable prettier/prettier */
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from '../screens/home';
-import DetailsScreen from '../screens/booking';
-import AboutScreen from '../screens/about';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { CurvedBottomBar } from 'react-native-curved-bottom-bar';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Tab = createBottomTabNavigator();
+import HomeScreen from '../screens/homepage';
+import BookingScreen from '../screens/booking';
+import HelpScreen from '../screens/help';
+import MyAccountScreen from '../screens/myaccount';
+import NewBookingScreen from '../screens/newbooking';
 
 export default function TabNavigator() {
-    return (
-        <NavigationContainer>
-            <Tab.Navigator>
-                <Tab.Screen name="Home" component={HomeScreen} />
-                <Tab.Screen name="Details" component={DetailsScreen} />
-                <Tab.Screen name="About" component={AboutScreen} />
-            </Tab.Navigator>
-        </NavigationContainer>
-    );
+  return (
+    <View style={{ flex: 1 }}>
+      <CurvedBottomBar.Navigator
+        type="DOWN"
+        style={styles.bottomBar}
+        height={60}
+        circleWidth={100}
+        bgColor="#155A64"
+        initialRouteName="Home"
+        borderTopLeftRight
+        renderCircle={({ selectedTab, navigate }) => (
+          <TouchableOpacity
+            style={[
+              styles.circleButton,
+              selectedTab === 'NewBooking' && { backgroundColor: '#d84269' },
+            ]}
+            onPress={() => navigate('NewBooking')}
+          >
+            <MaterialCommunityIcons 
+              name={selectedTab === 'NewBooking' ? 'book-check' : 'book-plus'} 
+            //   color={selectedTab === 'NewBooking' ? 'pink' : 'white'} 
+              color='white'
+              size={30} 
+            />
+          </TouchableOpacity>
+        )}
+        tabBar={({ routeName, selectedTab, navigate }) => {
+          let iconName;
+          if (routeName === 'Home') {
+            iconName = 'home';
+          } else if (routeName === 'Booking') {
+            iconName = 'ticket-confirmation';
+          } else if (routeName === 'Help') {
+            iconName = 'help-circle';
+          } else if (routeName === 'MyAccount') {
+            iconName = 'account';
+          }
+
+          return (
+            <TouchableOpacity
+              onPress={() => navigate(routeName)}
+              style={styles.tabButton}
+            >
+              <MaterialCommunityIcons
+                name={iconName}
+                size={28}
+                color={routeName === selectedTab ? '#f03535' : 'white'}
+              />
+            </TouchableOpacity>
+          );
+        }}
+      >
+        <CurvedBottomBar.Screen name="Home" position="LEFT" component={HomeScreen} />
+        <CurvedBottomBar.Screen name="Booking" position="LEFT" component={BookingScreen} />
+        <CurvedBottomBar.Screen name="NewBooking" component={NewBookingScreen} position="CENTER" />
+        <CurvedBottomBar.Screen name="Help" position="RIGHT" component={HelpScreen} />
+        <CurvedBottomBar.Screen name="MyAccount" position="RIGHT" component={MyAccountScreen} />
+      </CurvedBottomBar.Navigator>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  bottomBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  circleButton: {
+    width: 55,
+    height: 55,
+    borderRadius: 27.5,
+    backgroundColor: '#f03535',
+    alignItems: 'center',
+    justifyContent: 'center',
+    bottom: 30,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

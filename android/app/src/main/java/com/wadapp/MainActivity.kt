@@ -1,4 +1,4 @@
-package com.wad
+package com.wadapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

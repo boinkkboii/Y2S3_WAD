@@ -74,9 +74,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.wad"
+    namespace "com.wadapp"
     defaultConfig {
-        applicationId "com.wad"
+        applicationId "com.wadapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -100,6 +100,11 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'lintAnalyzeDebug') {
+            task.dependsOn(':app:copyReactNativeVectorIconFonts')
         }
     }
 }

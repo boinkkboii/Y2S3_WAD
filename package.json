@@ -1,5 +1,5 @@
 {
-  "name": "WAD",
+  "name": "WADApp",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -30,7 +30,10 @@
     "react-native-screens": "3.29",
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-vector-icons": "^10.2.0",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "wad": "file:",
+    "WAD": "file:",
+    "WADApp": "file:"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,7 +1,7 @@
-/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable prettier/prettier */
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { CurvedBottomBar } from 'react-native-curved-bottom-bar';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -27,7 +27,7 @@ export default function TabNavigator() {
           <TouchableOpacity
             style={[
               styles.circleButton,
-              selectedTab === 'NewBooking' && { backgroundColor: '#d84269' },
+              selectedTab === 'NewBooking' && {backgroundColor: '#d84269'},
             ]}
             onPress={() => navigate('NewBooking')}
           >

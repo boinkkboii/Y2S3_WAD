@@ -9,3 +9,8 @@ npm install react-native-svg
 
 npx react-native run-android
     can show logs in terminal instead of android studio virtual machine
+
+npx react-native link react-native-fs
+npx react-native link react-native-zip-archive
+
+npm install papaparse

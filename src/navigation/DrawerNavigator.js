@@ -27,7 +27,7 @@ export default function DrawerNavigator() {
       }}
     >
       <Drawer.Screen
-        name="Home"
+        name="MainHome"
         component={TabNavigator}
         options={{
           drawerIcon: HomeIcon,

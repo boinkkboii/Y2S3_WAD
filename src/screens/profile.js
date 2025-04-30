@@ -1,17 +1,126 @@
-import React, { Component }  from "react";
-import {Button,View,Text} from "react-native";
+import React, { Component } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import Icon from 'react-native-vector-icons/Feather';
 
-export default class About extends Component{
-    render()
-    {
-        return(
-            <View style={{flex:1, alignSelf:'center', justifyContent:'center'}} >
-                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Profile</Text>
-                <View style={{ margin: 10 }}>
-                    <Button title="Go back" onPress={() => this.props.navigation.goBack()} />
-                </View>
-                
+
+export default class Profile extends Component {
+  render() {
+    return (
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Top Section: Profile Info + Image */}
+        <View style={styles.profileContainer}>
+        {/* Edit Button */}
+        <TouchableOpacity style={styles.editIcon} onPress={() => alert('Edit profile')}>
+            <Icon name="edit-2" size={20} color="#333" />
+        </TouchableOpacity>
+
+        <View style={styles.profileRow}>
+            {/* Text Info */}
+            <View style={styles.textInfo}>
+            <Text style={styles.heading}>My Profile</Text>
+            <Text style={styles.infoText}>John Doe</Text>
+            <Text style={styles.infoText}>Jan 1, 1990</Text>
+            <Text style={styles.infoText}>+1234567890</Text>
+            <Text style={styles.infoText}>johndoe@example.com</Text>
             </View>
-        )
-    }
+
+            {/* Profile Image */}
+            <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1627693685101-687bf0eb1222?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}
+            style={styles.profileImage}
+            />
+        </View>
+        </View>
+
+
+        {/* Bottom Section: Options */}
+        <View style={styles.optionsContainer}>
+            <TouchableOpacity style={styles.flatButton} onPress={() => this.props.navigation.navigate('Booking')}>
+                <Text style={styles.flatButtonText}>My Bookings</Text>
+            </TouchableOpacity>
+          <TouchableOpacity style={styles.flatButton}>
+            <Text style={styles.flatButtonText}>Personal Information</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.flatButton}>
+            <Text style={styles.flatButtonText}>Payment Methods</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.flatButton} onPress={() => this.props.navigation.navigate('Help')}>
+          <Text style={styles.flatButtonText}>Help & Support</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.flatButton}>
+            <Text style={styles.flatButtonText}>Log Out</Text>
+          </TouchableOpacity>
+        </View>
+
+        
+      </ScrollView>
+    );
+  }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    paddingTop: 50,
+    backgroundColor: '#f9f9f9',
+    flexGrow: 1,
+  },
+  profileContainer: {
+    marginBottom: 30,
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    elevation: 3,
+  },
+  profileRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textInfo: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  infoText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  optionsContainer: {
+    marginBottom: 30,
+  },
+  flatButton: {
+    backgroundColor: '#ffffff',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  flatButtonText: {
+    color: '#333',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  backButton: {
+    alignSelf: 'center',
+    width: '100%',
+  },
+  editIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 5,
+    zIndex: 1,
+  }
+  
+});

@@ -8,7 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import HomeScreen from '../screens/homepage';
 import BookingScreen from '../screens/booking';
 import HelpScreen from '../screens/help';
-import MyAccountScreen from '../screens/myaccount';
+import MyAccountScreen from '../screens/profile';
 import NewBookingScreen from '../screens/newbooking';
 
 export default function TabNavigator() {

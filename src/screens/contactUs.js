@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-const HelpScreen = () => {
+const ContactUsScreen = () => {
   return (
     <View>
-      <Text>Help Page (FAQ)</Text>
+      <Text>Contact Us Page</Text>
     </View>
   );
 };
 
-export default HelpScreen;
+export default ContactUsScreen;

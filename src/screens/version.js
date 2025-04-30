@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-const HelpScreen = () => {
+const VersionScreen = () => {
   return (
     <View>
-      <Text>Help Page (FAQ)</Text>
+      <Text>Version Page</Text>
     </View>
   );
 };
 
-export default HelpScreen;
+export default VersionScreen;

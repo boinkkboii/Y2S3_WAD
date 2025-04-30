@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CurvedBottomBar } from 'react-native-curved-bottom-bar';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+// import MenuScreen from '../screens/menu';
 import HomeScreen from '../screens/homepage';
 import BookingScreen from '../screens/booking';
 import HelpScreen from '../screens/help';
@@ -32,7 +33,6 @@ export default function TabNavigator() {
           >
             <MaterialCommunityIcons 
               name={selectedTab === 'NewBooking' ? 'book-check' : 'book-plus'} 
-            //   color={selectedTab === 'NewBooking' ? 'pink' : 'white'} 
               color='white'
               size={30} 
             />
@@ -66,7 +66,7 @@ export default function TabNavigator() {
       >
         <CurvedBottomBar.Screen name="Home" position="LEFT" component={HomeScreen} />
         <CurvedBottomBar.Screen name="Booking" position="LEFT" component={BookingScreen} />
-        <CurvedBottomBar.Screen name="NewBooking" component={NewBookingScreen} position="CENTER" />
+        <CurvedBottomBar.Screen name="NewBooking" position="CENTER" component={NewBookingScreen} />
         <CurvedBottomBar.Screen name="Help" position="RIGHT" component={HelpScreen} />
         <CurvedBottomBar.Screen name="MyAccount" position="RIGHT" component={MyAccountScreen} />
       </CurvedBottomBar.Navigator>

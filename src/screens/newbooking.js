@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-const MyAccountScreen = () => {
+const NewBookingScreen = () => {
   return (
     <View>
       <Text>New Booking Page</Text>
@@ -9,4 +9,4 @@ const MyAccountScreen = () => {
   );
 };
 
-export default MyAccountScreen;
+export default NewBookingScreen;

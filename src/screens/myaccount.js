@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
+import { createUserTable, getDBConnection, getUserProfile, insertUserProfile } from "./db-service";
+
 
 const Profile = ({ navigation }) => {
     const [profile, setProfile] = useState({
@@ -10,26 +12,55 @@ const Profile = ({ navigation }) => {
         email: '',
     });
 
+    const loadProfile = async () => {
+        try {
+            const db = await getDBConnection();
+            await createUserTable(db);
+            await insertUserProfile(db, 'John', '1990-01-01', '+1234567890', 'johndoe@example.com', '/images/profile/johndoe.png');
+            const userProfile = await getUserProfile(db);
+            if (userProfile) {
+                setProfile({
+                    name: userProfile.name || '',
+                    birthdate: userProfile.dob || '',
+                    phone: userProfile.phone || '',
+                    email: userProfile.email || '',
+                });
+            } else {
+                Alert.alert("Error", "Profile not found.");
+            }
+        } catch (error) {
+            console.error("Error loading profile:", error.message);
+            Alert.alert("Error", "Failed to load profile.");
+        }
+    };
+    
+    //useEffect must be outside of any function
     useEffect(() => {
-      fetch('http://10.0.2.2:5000/api/profile') // Use your real IP & port
-          .then(response => response.json())
-          .then(data => {
-              if (data) {
-                  setProfile({
-                      name: data.name || '',
-                      birthdate: data.dob || '',
-                      phone: data.phone || '',
-                      email: data.email || '',
-                  });
-              } else {
-                  Alert.alert("Error", "Profile not found.");
-              }
-          })
-          .catch(error => {
-              console.error("Fetch error:", error.message);
-              Alert.alert("Error", "Failed to load profile.");
-          });
-  }, []);
+        loadProfile();
+    }, []);
+    
+
+    //     useEffect(() => {
+    //       fetch('http://10.0.2.2:5000/api/profile') // Use your real IP & port
+    //           .then(response => response.json())
+    //           .then(data => {
+    //               if (data) {
+    //                   setProfile({
+    //                       name: data.name || '',
+    //                       birthdate: data.dob || '',
+    //                       phone: data.phone || '',
+    //                       email: data.email || '',
+    //                   });
+    //               } else {
+    //                   Alert.alert("Error", "Profile not found.");
+    //               }
+    //           })
+    //           .catch(error => {
+    //               console.error("Fetch error:", error.message);
+    //               Alert.alert("Error", "Failed to load profile.");
+    //           });
+    //   }, []);
+
   
     return (
         <ScrollView contentContainerStyle={styles.container}>

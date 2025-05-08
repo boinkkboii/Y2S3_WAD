@@ -1,12 +1,11 @@
 import sqlite3
 
-# Use same DB as the API
 db = sqlite3.connect('myprofile.sqlite')
 
 # Drop table if exists
 db.execute('DROP TABLE IF EXISTS user_profile')
 
-# Create the user_profile table matching the Flask API
+# Create the user_profile table
 db.execute('''
     CREATE TABLE user_profile (
         id INTEGER PRIMARY KEY,

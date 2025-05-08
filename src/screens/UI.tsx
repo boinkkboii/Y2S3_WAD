@@ -1,6 +1,6 @@
 // UI.tsx
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 /**
@@ -14,7 +14,12 @@ export const TouchableField: React.FC<{
     onPress: () => void;
 }> = ({ icon, placeholder, label, value, onPress }) => (
     <TouchableOpacity style={styles.fieldContainer} onPress={onPress}>
-        <MaterialCommunityIcons name={icon} size={20} color="#333" style={styles.icon} />
+        <MaterialCommunityIcons
+            name={icon}
+            size={20}
+            color="#333"
+            style={styles.icon}
+        />
         <Text style={styles.label}>{label}</Text>
         <Text style={[styles.fieldText, !value && styles.placeholderText]}>
             {value || placeholder}
@@ -38,13 +43,11 @@ export const SegmentedButtons: React.FC<{
                     styles.segmentButton,
                     selected === opt && styles.segmentButtonActive,
                 ]}
-                onPress={() => onSelect(opt)}
-            >
+                onPress={() => onSelect(opt)}>
                 <Text
                     style={
                         selected === opt ? styles.segmentTextActive : styles.segmentText
-                    }
-                >
+                    }>
                     {opt}
                 </Text>
             </TouchableOpacity>
@@ -55,15 +58,42 @@ export const SegmentedButtons: React.FC<{
 /**
  * SearchButton Component
  */
-export const SearchButton: React.FC<{ title: string; onPress: () => void, icon:string }> = ({
-    title,
-    onPress,
-    icon,
-}) => (
+export const SearchButton: React.FC<{
+    title: string;
+    onPress: () => void;
+    icon: string;
+}> = ({ title, onPress, icon }) => (
     <TouchableOpacity style={styles.searchButton} onPress={onPress}>
-        <MaterialCommunityIcons name={icon} size={24} color="#fff" style={styles.searchIcon} />
+        <MaterialCommunityIcons
+            name={icon}
+            size={24}
+            color="#fff"
+            style={styles.searchIcon}
+        />
         <Text style={styles.searchText}>{title}</Text>
     </TouchableOpacity>
+);
+
+/**
+ * InputField Component
+ */
+export const InputWithLabel: React.FC<{
+    label: string;
+    placeholder: string;
+    value: string;
+    onChange: (text: string) => void;
+    secureTextEntry?: boolean; // Optional for password input
+}> = ({ label, placeholder, value, onChange, secureTextEntry = false }) => (
+    <View style={styles.inputContainer}>
+        <TextInput
+            style={styles.inputField}
+            value={value}
+            onChangeText={onChange}
+            placeholder={placeholder}
+            placeholderTextColor="#888"
+            secureTextEntry={secureTextEntry}
+        />
+    </View>
 );
 
 const styles = StyleSheet.create({
@@ -132,7 +162,6 @@ const styles = StyleSheet.create({
         marginRight: 8,
         marginTop: 1,
         marginBottom: 0,
-
     },
     searchText: {
         color: '#ffffff',
@@ -146,4 +175,20 @@ const styles = StyleSheet.create({
         fontFamily: 'Nurito',
         marginLeft: 10,
     },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        padding: 1,
+        backgroundColor: '#fff',
+        marginVertical: 10,
+    },
+    inputField: {
+        fontSize: 16,
+        color: '#2c2a2a',
+        fontFamily: 'Nunito',
+        fontWeight: 'bold',
+    }
 });

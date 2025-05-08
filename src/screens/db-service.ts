@@ -96,7 +96,7 @@ const callBackFail = (error: any) => {
 
 export const getDBConnection = async () => {
     return openDatabase(
-        { name: dbName, location: 'default', createFromLocation: `~${dbName}`},
+        { name: dbName, location: 'default', createFromLocation: `~${dbName}` },
         callBackSuccess,
         callBackFail
     );
@@ -116,31 +116,49 @@ export const createUserTable = async (db: SQLiteDatabase) => {
     await db.executeSql(query);
 };
 
-export const insertUserProfile = async (db: SQLiteDatabase, name: string, dob: string, phone: string, email: string, profile_image: string) => {
-    const insertQuery = `
-    INSERT INTO user_profile (name, dob, phone, email, profile_image)
-    VALUES (?, ?, ?, ?, ?);
-    `;
-    try {
-        await db.executeSql(insertQuery, [name, dob, phone, email, profile_image]);
-        console.log("User profile inserted.");
-    } catch (error) {
-        console.log("Error inserting profile: ", error);
-    }
-};
-
 export const getUserProfile = async (db: SQLiteDatabase) => {
-    const query = 'SELECT * FROM user_profile';
+    const query = 'SELECT * FROM user_profile LIMIT 1';
     const results = await db.executeSql(query);
-    const profiles = [];
 
-    for (let i = 0; i < results[0].rows.length; i++) {
-        profiles.push(results[0].rows.item(i)); // Collect all profiles
+    if (results[0].rows.length > 0) {
+        return results[0].rows.item(0);
     }
 
-    console.log("All profiles: ", profiles); // Log all profiles
-    return profiles;
+    return null;
 };
+
+export const upsertUserProfile = async (
+    db: SQLiteDatabase,
+    name: string,
+    dob: string,
+    phone: string,
+    email: string,
+    profile_image: string,
+) => {
+    const existingProfile = await getUserProfile(db);
+
+    profile_image = profile_image?.trim() ? profile_image : 'default';
+
+
+    if (existingProfile) {
+        const id = existingProfile.id; // Assume only one profile exists
+        const updateQuery = `
+        UPDATE user_profile
+        SET name = ?, dob = ?, phone = ?, email = ?, profile_image = ?
+        WHERE id = ?;
+    `;
+        await db.executeSql(updateQuery, [name, dob, phone, email, profile_image, id]);
+        console.log('User profile updated.');
+    } else {
+        const insertQuery = `
+        INSERT INTO user_profile (name, dob, phone, email, profile_image)
+        VALUES (?, ?, ?, ?, ?);
+    `;
+        await db.executeSql(insertQuery, [name, dob, phone, email, profile_image]);
+        console.log('User profile inserted.');
+    }
+};
+
 
 
 

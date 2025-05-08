@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
-import { createUserTable, getDBConnection, getUserProfile, insertUserProfile } from "./db-service";
+import { createUserTable, getDBConnection, getUserProfile } from "./db-service";
 import { TouchableField } from './UI';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const ProfileScreen = ({ navigation }) => {
     const [profile, setProfile] = useState({
@@ -10,64 +11,74 @@ const ProfileScreen = ({ navigation }) => {
         birthdate: '',
         phone: '',
         email: '',
+        profile_image: '',
     });
+
+    const defaultImage = require('../img/profile-pic.png');
 
     const loadProfile = async () => {
         try {
             const db = await getDBConnection();
             await createUserTable(db);
-            await insertUserProfile(db, 'John', '1990-01-01', '+1234567890', 'johndoe@example.com', '/images/profile/johndoe.png');
             const userProfile = await getUserProfile(db);
+
             if (userProfile) {
                 setProfile({
                     name: userProfile.name || '',
                     birthdate: userProfile.dob || '',
                     phone: userProfile.phone || '',
                     email: userProfile.email || '',
+                    profile_image: userProfile.profile_image || defaultImage,
                 });
             } else {
-                Alert.alert("Error", "Profile not found.");
+                setProfile({
+                    name: '',
+                    birthdate: '',
+                    phone: '',
+                    email: '',
+                    profile_image: defaultImage,
+                });
             }
         } catch (error) {
             console.error("Error loading profile:", error.message);
             Alert.alert("Error", "Failed to load profile.");
         }
     };
-    
-    //useEffect must be outside of any function
+
     useEffect(() => {
         loadProfile();
     }, []);
-    
 
-    //     useEffect(() => {
-    //       fetch('http://10.0.2.2:5000/api/profile') // Use your real IP & port
-    //           .then(response => response.json())
-    //           .then(data => {
-    //               if (data) {
-    //                   setProfile({
-    //                       name: data.name || '',
-    //                       birthdate: data.dob || '',
-    //                       phone: data.phone || '',
-    //                       email: data.email || '',
-    //                   });
-    //               } else {
-    //                   Alert.alert("Error", "Profile not found.");
-    //               }
-    //           })
-    //           .catch(error => {
-    //               console.error("Fetch error:", error.message);
-    //               Alert.alert("Error", "Failed to load profile.");
-    //           });
-    //   }, []);
+    // Function to allow the user to pick a new profile image from the file explorer
+    const pickImage = () => {
+        const options = {
+            mediaType: 'photo', // Allow only photos
+            includeBase64: false, // You can set this to true if you want to handle base64 encoding
+        };
 
-  
+        // Launch the image library to pick a photo from the file explorer
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+                console.log('ImagePicker Error: ', response.errorMessage);
+                Alert.alert('Error', response.errorMessage);
+            } else {
+                // Save the selected image URI to state
+                setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    profile_image: { uri: response.assets[0].uri }, // Update the profile image
+                }));
+            }
+        });
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View>
-                <TouchableField 
+                <TouchableField
                     label="Register"
-                    onPress={() => navigation.navigate('Register')}/>
+                    onPress={() => navigation.navigate('Register')} />
             </View>
             {/* Top Section: Profile Info + Image */}
             <View style={styles.profileContainer}>
@@ -85,9 +96,20 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
 
                     <Image
-                        source={{ uri: 'https://images.unsplash.com/photo-1627693685101-687bf0eb1222?q=80&w=2070&auto=format&fit=crop' }}
-                        style={styles.profileImage}
+                        source={
+                            !profile.profile_image || profile.profile_image === 'default'
+                                ? require('../img/profile-pic.png')  // replace with actual relative path
+                                : { uri: profile.profile_image }
+                        }
+                        style={{ width: 100, height: 100, borderRadius: 50 }}
                     />
+
+
+                    {/* Button to update the profile image */}
+                    <TouchableOpacity onPress={pickImage} style={{ marginTop: 20 }}>
+                        <Text>Update Profile Image</Text>
+                    </TouchableOpacity>
+
                 </View>
             </View>
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { getDBConnection, upsertUserProfile } from './db-service';  // Assume these functions are defined as earlier
+import { getDBConnection, upsertUserProfile, createUserTable } from './db-service';  // Assume these functions are defined as earlier
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
     const [name, setName] = useState('');
     const [dob, setDob] = useState('');
     const [phone, setPhone] = useState('');
@@ -11,18 +11,15 @@ const RegisterScreen = () => {
 
     // Handle the registration form submission
     const handleSubmit = async () => {
-        if (!name || !dob || !phone || !email || !profileImage) {
-            Alert.alert('Error', 'Please fill in all fields');
-            return;
-        }
-
         try {
             const db = await getDBConnection();
-            await upsertUserProfile(db, name, dob, phone, email, profileImage);
-            Alert.alert('Success', 'Profile created/updated successfully');
+            await createUserTable(db);
+            await upsertUserProfile(db, name, dob, phone, email, profileImage); // Use real input values
+            Alert.alert("Success", "Registration complete");
+            navigation.navigate("Profile");
         } catch (error) {
-            console.error('Error saving profile:', error);
-            Alert.alert('Error', 'Failed to save profile');
+            Alert.alert("Error", "Registration failed");
+            console.error(error);
         }
     };
 
@@ -64,15 +61,9 @@ const RegisterScreen = () => {
                 keyboardType="email-address"
             />
 
-            <Text>Profile Image URL</Text>
-            <TextInput
-                style={styles.input}
-                value={profileImage}
-                onChangeText={setProfileImage}
-                placeholder="Enter the URL of your profile image"
-            />
-
             <Button title="Register" onPress={handleSubmit} />
+            <Button title="Login" onPress={ () => navigation.navigate('Login')}></Button>
+            <Button title="Go Back" onPress={() => navigation.goBack()} />
         </View>
     );
 };

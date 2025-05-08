@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 // import MenuScreen from '../screens/menu';
 import HomeScreen from '../screens/homepage';
-import BookingScreen from '../screens/booking';
+import BookingStack from '../navigation/BookingStack';
 import HelpScreen from '../screens/help';
 import MyAccountScreen from '../screens/myaccount';
 import NewBookingScreen from '../screens/newbooking';
@@ -65,7 +65,7 @@ export default function TabNavigator() {
         }}
       >
         <CurvedBottomBar.Screen name="Home" position="LEFT" component={HomeScreen} />
-        <CurvedBottomBar.Screen name="Booking" position="LEFT" component={BookingScreen} />
+        <CurvedBottomBar.Screen name="Booking" position="LEFT" component={BookingStack} />
         <CurvedBottomBar.Screen name="NewBooking" position="CENTER" component={NewBookingScreen} />
         <CurvedBottomBar.Screen name="Help" position="RIGHT" component={HelpScreen} />
         <CurvedBottomBar.Screen name="MyAccount" position="RIGHT" component={MyAccountScreen} />

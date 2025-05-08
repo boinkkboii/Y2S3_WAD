@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { createUserTable, getDBConnection, getUserProfile, insertUserProfile } from "./db-service";
 import { TouchableField } from './UI';
 
-const Profile = ({ navigation }) => {
+const ProfileScreen = ({ navigation }) => {
     const [profile, setProfile] = useState({
         name: '',
         birthdate: '',
@@ -175,4 +175,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Profile;
+export default ProfileScreen;

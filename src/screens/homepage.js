@@ -8,6 +8,7 @@ const HomeScreen = () => {
       <Text style={styles.header}>Welcome to Home Page!</Text>
       <Text style={styles.subHeader}>This is your main landing screen.</Text>
     </View>
+    
   );
 };
 

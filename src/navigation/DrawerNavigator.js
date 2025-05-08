@@ -3,7 +3,7 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import TabNavigator from './TabNavigator';
+import MainTabStack from './MainStackNavigator';
 import ContactUs from '../screens/contactUs';
 import Settings from '../screens/settings';
 import Version from '../screens/version';
@@ -28,7 +28,7 @@ export default function DrawerNavigator() {
     >
       <Drawer.Screen
         name="MainHome"
-        component={TabNavigator}
+        component={MainTabStack}
         options={{
           drawerIcon: HomeIcon,
         }}

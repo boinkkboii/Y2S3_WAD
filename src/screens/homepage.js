@@ -1,19 +1,21 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+
+// needed if you want to use the API data in the app screens
 import { getRoutesData } from '../api/routes';        // Import routes API
-import { getAgencyData } from '../api/agency';        // Import agency API
-import { getCalendarData } from '../api/calendar';    // Import calendar API
-import { getStopTimesData } from '../api/stop_times'; // Import stop_times API
-import { getStopsData } from '../api/stops';          // Import stops API
+// import { getAgencyData } from '../api/agency';        // Import agency API
+// import { getCalendarData } from '../api/calendar';    // Import calendar API
+// import { getStopTimesData } from '../api/stop_times'; // Import stop_times API
+// import { getStopsData } from '../api/stops';          // Import stops API
 import { getTripsData } from '../api/trips';          // Import trips API
 
 const HomePage = () => {
   const [routes, setRoutes] = useState('');
-  const [agency, setAgency] = useState('');
-  const [calendar, setCalendar] = useState('');
-  const [stopTimes, setStopTimes] = useState('');
-  const [stops, setStops] = useState('');
+  // const [agency, setAgency] = useState('');
+  // const [calendar, setCalendar] = useState('');
+  // const [stopTimes, setStopTimes] = useState('');
+  // const [stops, setStops] = useState('');
   const [trips, setTrips] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -22,17 +24,17 @@ const HomePage = () => {
       try {
         setLoading(true);
         const routesData = await getRoutesData();
-        const agencyData = await getAgencyData();
-        const calendarData = await getCalendarData();
-        const stopTimesData = await getStopTimesData();
-        const stopsData = await getStopsData();
+        // const agencyData = await getAgencyData();
+        // const calendarData = await getCalendarData();
+        // const stopTimesData = await getStopTimesData();
+        // const stopsData = await getStopsData();
         const tripsData = await getTripsData();
 
         setRoutes(routesData);
-        setAgency(agencyData);
-        setCalendar(calendarData);
-        setStopTimes(stopTimesData);
-        setStops(stopsData);
+        // setAgency(agencyData);
+        // setCalendar(calendarData);
+        // setStopTimes(stopTimesData);
+        // setStops(stopsData);
         setTrips(tripsData);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -57,10 +59,10 @@ const HomePage = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>API Data Overview</Text>
 
-      {/* <View style={styles.section}>
+      <View style={styles.section}>
         <Text style={styles.sectionHeader}>Routes Data:</Text>
         <Text style={styles.content}>{routes}</Text>
-      </View> */}
+      </View>
 
       {/* <View style={styles.section}>
         <Text style={styles.sectionHeader}>Agency Data:</Text>
@@ -103,7 +105,7 @@ const HomePage = () => {
         </Text>
       </View> */}
 
-      <View style={styles.section}>
+      {/* <View style={styles.section}>
         <Text style={styles.sectionHeader}>Trips Data (First 200 entries):</Text>
         <Text style={styles.content}>
           {(() => {
@@ -116,7 +118,7 @@ const HomePage = () => {
             }
           })()}
         </Text>
-      </View>
+      </View> */}
 
     </ScrollView>
   );

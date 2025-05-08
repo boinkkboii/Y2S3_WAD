@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import RNFS from 'react-native-fs';
 import Papa from 'papaparse';
-import { downloadAndUnzipGTFS } from './routes';
+import { downloadAndUnzipGTFS } from './zipDecompress';
 
 export const getTripsData = async () => {
   try {

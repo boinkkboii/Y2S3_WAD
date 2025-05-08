@@ -1,34 +1,52 @@
 // BookingDetailScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingDetailsById } from '../services/sqlite';
 
-const BookingDetailScreen = ({ route }) => {
-  const { bookingId, userId } = route.params;
-  const [bookingDetails, setBookingDetails] = useState(null);
+const BookingDetailScreen = ({ route, navigation }) => {
+  const { bookingId } = route.params;
+  const [booking, setBookingDetails] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const loadDetails = async () => {
-      const db = await getDBConnection();
-      const result = await getBookingDetailsById(db, bookingId, userId);
-      setBookingDetails(result);
-    };
+      const loadDetails = async () => {
+        try {
+          const storedUserId = await AsyncStorage.getItem('loggedInUserId');
+          if (!storedUserId) return;
+  
+          const id = parseInt(storedUserId, 10);
+          setUserId(id);
+  
+          const db = await getDBConnection();
+          const bookingDetails = await getBookingDetailsById(db, bookingId);
+  
+          if (bookingDetails?.user_id === id) {
+            setBookingDetails(bookingDetails);
+          } else {
+            console.warn('Booking does not belong to this user.');
+          }
+        } catch (error) {
+          console.error('Error loading booking detail:', error);
+        }
+      };
 
     loadDetails();
-  }, [bookingId, userId]);
+  }, [bookingId]);
 
-  if (!bookingDetails) return <Text>Loading...</Text>;
+  if (!booking) return <Text>Loading...</Text>;
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>{bookingDetails.from_location} → {bookingDetails.to_location}</Text>
-      <Text style={styles.detailText}>Date: {bookingDetails.date}</Text>
-      <Text style={styles.detailText}>Time: {bookingDetails.time}</Text>
-      <Text style={styles.detailText}>Bus Plate: {bookingDetails.car_plate}</Text>
-      <Text style={styles.detailText}>Driver: {bookingDetails.driver_name}</Text>
-      <Text style={styles.detailText}>Bus Type: {bookingDetails.bus_type}</Text>
-      <Text style={styles.detailText}>Passengers: {bookingDetails.no_of_passenger}</Text>
+      <Text style={styles.title}>Booking ID: {booking.booking_id}</Text>
+      <Text>From: {booking.departure}</Text>
+      <Text>To: {booking.destination}</Text>
+      <Text>Date: {booking.date}</Text>
+      <Text>Time: {booking.time}</Text>
+      <Text>Passengers: {booking.no_of_passenger}</Text>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </ScrollView>
+    
   );
 };
 

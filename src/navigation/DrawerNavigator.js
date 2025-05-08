@@ -2,7 +2,6 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import TabNavigator from './TabNavigator';
 import ContactUs from '../screens/contactUs';
 import Settings from '../screens/settings';

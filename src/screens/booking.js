@@ -1,44 +1,59 @@
 // BookingScreen.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingsForUser } from '../services/sqlite';
 import { useNavigation } from '@react-navigation/native';
 
-const BookingScreen = ({ route }) => {
-  const userId = 1; // Passed from the tab or login context
+const BookingScreen = () => {
+  const [userId, setUserId] = useState(null);
   const [bookings, setBookings] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
     const loadBookings = async () => {
-      const db = await getDBConnection();
-      const result = await getBookingsForUser(db, userId);
-      setBookings(result);
+      try {
+        const storedUserId = await AsyncStorage.getItem('loggedInUserId');
+        if (storedUserId) {
+          const id = parseInt(storedUserId, 10);
+          setUserId(id);
+
+          const db = await getDBConnection();
+          const result = await getBookingsForUser(db, id);
+          setBookings(result);
+        }
+      } catch (error) {
+        console.error('Error loading user bookings:', error);
+      }
     };
 
     loadBookings();
-  }, [userId]);
+  }, []);
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={bookings}
-        keyExtractor={(item) => item.booking_id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('BookingDetail', {
-                bookingId: item.booking_id,
-                userId: userId,
-              })
-            }
-            style={styles.bookingItem}
-          >
-            <Text style={styles.bookingText}>{item.from_location} → {item.to_location}</Text>
-            <Text>{item.date} at {item.time}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      {bookings.length > 0 ? (
+        <FlatList
+          data={bookings}
+          keyExtractor={(item) => item.booking_id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('BookingDetail', {
+                  bookingId: item.booking_id,
+                  userId: userId,
+                })
+              }
+              style={styles.bookingItem}
+            >
+              <Text style={styles.bookingText}>{item.departure} → {item.destination}</Text>
+              <Text>{item.date} at {item.time}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      ) : (
+        <Text>No bookings found.</Text>
+      )}
     </View>
   );
 };

@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+
+// needed if you want to use the API data in the app screens
 import { getRoutesData } from '../api/routes';        // Import routes API
-import { getAgencyData } from '../api/agency';        // Import agency API
-import { getCalendarData } from '../api/calendar';    // Import calendar API
-import { getStopTimesData } from '../api/stop_times'; // Import stop_times API
-import { getStopsData } from '../api/stops';          // Import stops API
+// import { getAgencyData } from '../api/agency';        // Import agency API
+// import { getCalendarData } from '../api/calendar';    // Import calendar API
+// import { getStopTimesData } from '../api/stop_times'; // Import stop_times API
+// import { getStopsData } from '../api/stops';          // Import stops API
 import { getTripsData } from '../api/trips';          // Import trips API
 
 const HomePage = () => {
@@ -57,23 +59,22 @@ const HomePage = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>API Data Overview</Text>
 
-      {/* <View style={styles.section}>
+      <View style={styles.section}>
         <Text style={styles.sectionHeader}>Routes Data:</Text>
         <Text style={styles.content}>{routes}</Text>
-      </View> */}
+      </View>
 
-      {/* <View style={styles.section}>
+      <View style={styles.section}>
         <Text style={styles.sectionHeader}>Agency Data:</Text>
         <Text style={styles.content}>{agency}</Text>
-      </View> */}
+      </View> 
 
-      {/* <View style={styles.section}>
+      <View style={styles.section}>
         <Text style={styles.sectionHeader}>Calendar Data:</Text>
         <Text style={styles.content}>{calendar}</Text>
-      </View> */}
+      </View>
 
-      {/* too many data and caused the app to crash */}
-      {/* <View style={styles.section}>
+      <View style={styles.section}>
         <Text style={styles.sectionHeader}>Stop Times Data (First 200 entries):</Text>
         <Text style={styles.content}>
           {(() => {
@@ -86,9 +87,9 @@ const HomePage = () => {
             }
           })()}
         </Text>
-      </View> */}
+      </View>
 
-      {/* <View style={styles.section}>
+      <View style={styles.section}>
         <Text style={styles.sectionHeader}>Stops Data (First 200 entries):</Text>
         <Text style={styles.content}>
           {(() => {
@@ -101,7 +102,7 @@ const HomePage = () => {
             }
           })()}
         </Text>
-      </View> */}
+      </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionHeader}>Trips Data (First 200 entries):</Text>

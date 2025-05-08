@@ -104,58 +104,13 @@ export const deleteUser = async (db: SQLiteDatabase, userId: string) => {
   }
 };
 
-//Bus CRUD functions
-export const getBuses = async (db: SQLiteDatabase): Promise<any[]> => {
-  try {
-    const buses: any[] = [];
-    const query = `SELECT * FROM bus ORDER BY car_plate`;
-    const results = await db.executeSql(query);
-    results.forEach(result => {
-      result.rows.raw().forEach((item: any) => buses.push(item));
-    });
-    return buses;
-  } catch (error) {
-    console.error(error);
-    throw Error('Failed to fetch buses!');
-  }
-};
-
-export const getBusByPlate = async (db: SQLiteDatabase, carPlate: string): Promise<any> => {
-  try {
-    const query = `SELECT * FROM bus WHERE car_plate = ?`;
-    const results = await db.executeSql(query, [carPlate]);
-    return results[0].rows.item(0);
-  } catch (error) {
-    console.error(error);
-    throw Error('Failed to fetch bus!');
-  }
-};
-
-//Bus schedule CRUD functions
-export const getSchedules = async (db: SQLiteDatabase): Promise<any[]> => {
-  try {
-    const schedules: any[] = [];
-    const query = `SELECT * FROM bus_schedule ORDER BY date, time`;
-    const results = await db.executeSql(query);
-    results.forEach(result => {
-      result.rows.raw().forEach((item: any) => schedules.push(item));
-    });
-    return schedules;
-  } catch (error) {
-    console.error(error);
-    throw Error('Failed to fetch schedules!');
-  }
-};
-
-export const getScheduleById = async (db: SQLiteDatabase, scheduleId: string): Promise<any> => {
-  try {
-    const query = `SELECT * FROM bus_schedule WHERE schedule_id = ?`;
-    const results = await db.executeSql(query, [scheduleId]);
-    return results[0].rows.item(0);
-  } catch (error) {
-    console.error(error);
-    throw Error('Failed to fetch schedule!');
-  }
+export const updateUserProfileImage = async (db: SQLiteDatabase, userId: string, uri: string) => {
+  const updateQuery = `
+      UPDATE users
+      SET profile_image = ?
+      WHERE id = ?;
+  `;
+  await db.executeSql(updateQuery, [uri, userId]);
 };
 
 //Booking CRUD functions
@@ -174,6 +129,7 @@ export const getBookings = async (db: SQLiteDatabase): Promise<any[]> => {
   }
 };
 
+
 export const getBookingsForUser = async (
   db: SQLiteDatabase,
   userId: string
@@ -182,63 +138,30 @@ export const getBookingsForUser = async (
     const bookings: any[] = [];
 
     const query = `
-      SELECT 
-        b.booking_id,
-        bs.schedule_id,
-        bs.from_location,
-        bs.to_location,
-        bs.date,
-        bs.time,
-        bs.car_plate,
-        bus.driver_name,
-        bus.bus_type,
-        b.no_of_passenger
-      FROM booking b
-      JOIN bus_schedule bs ON b.schedule_id = bs.schedule_id
-      LEFT JOIN bus ON bs.car_plate = bus.car_plate
-      WHERE b.user_id = ?
-      ORDER BY bs.date, bs.time
+      SELECT * FROM booking
+      WHERE user_id = ?
+      ORDER BY date, time;
     `;
 
     const results = await db.executeSql(query, [userId]);
+
     results.forEach(result => {
-      result.rows.raw().forEach((item: any) => bookings.push(item));
+      const rows = result.rows.raw(); // Gets all rows as an array
+      bookings.push(...rows);
     });
 
     return bookings;
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching bookings for user:', error);
     throw Error('Failed to fetch bookings for user!');
   }
 };
 
-export const getBookingDetailsById = async (
-  db: SQLiteDatabase,
-  bookingId: string,
-  userId: string
-): Promise<any> => {
+export const getBookingDetailsById = async (db: SQLiteDatabase, bookingId: number) => {
   try {
-    const query = `
-      SELECT 
-        b.booking_id,
-        b.user_id,
-        bs.schedule_id,
-        bs.from_location,
-        bs.to_location,
-        bs.date,
-        bs.time,
-        bs.car_plate,
-        bus.driver_name,
-        bus.bus_type,
-        b.no_of_passenger
-      FROM booking b
-      JOIN bus_schedule bs ON b.schedule_id = bs.schedule_id
-      LEFT JOIN bus ON bs.car_plate = bus.car_plate
-      WHERE b.booking_id = ? AND b.user_id = ?
-    `;
-
-    const results = await db.executeSql(query, [bookingId, userId]);
-    return results[0].rows.length > 0 ? results[0].rows.item(0) : null;
+    const results = await db.executeSql('SELECT * FROM booking WHERE booking_id = ?', [bookingId]);
+    const item = results[0].rows.item(0);
+    return item;
   } catch (error) {
     console.error(error);
     throw Error('Failed to fetch booking detail!');

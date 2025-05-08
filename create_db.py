@@ -6,6 +6,11 @@ import sqlite3
 conn = sqlite3.connect("busApp.sqlite")
 cursor = conn.cursor()
 
+# Drop table if exists
+cursor.execute('DROP TABLE IF EXISTS users')
+cursor.execute('DROP TABLE IF EXISTS booking')
+cursor.execute('DROP TABLE IF EXISTS busStops')
+
 # Create users table
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS users (
@@ -15,32 +20,8 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT NOT NULL,
     dob TEXT,
     gender TEXT,
-    phone TEXT
-)
-''')
-
-# Create bus table
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS bus (
-    car_plate TEXT PRIMARY KEY,
-    driver_name TEXT NOT NULL,
-    star_rating REAL,
-    rating_num INTEGER,
-    no_of_seat INTEGER,
-    bus_type TEXT
-)
-''')
-
-# Create bus_schedule table
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS bus_schedule (
-    schedule_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    car_plate TEXT NOT NULL,
-    from_location TEXT,
-    to_location TEXT,
-    date TEXT,
-    time TEXT,
-    FOREIGN KEY (car_plate) REFERENCES bus(car_plate)
+    phone TEXT,
+    profile_image TEXT
 )
 ''')
 
@@ -49,41 +30,70 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS booking (
     booking_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
-    schedule_id INTEGER,
+    departure TEXT,
+    destination TEXT,
+    date TEXT,
+    time INTEGER,
     no_of_passenger INTEGER,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (schedule_id) REFERENCES bus_schedule(schedule_id)
+    FOREIGN KEY (user_id) REFERENCES users(id)
+)
+''')
+
+# Create bus stops table
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS busStops (
+    stop_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
 )
 ''')
 
 # Insert test data
-cursor.execute("INSERT INTO users (name, email, password, dob, gender, phone) VALUES (?, ?, ?, ?, ?, ?)", 
-               ("test", "test@example.com", "test", "1990-01-01", "Female", "123456789"))
-cursor.execute("INSERT INTO users (name, email, password, dob, gender, phone) VALUES (?, ?, ?, ?, ?, ?)", 
-               ("pp", "pp@example.com", "pp", "1985-05-20", "Male", "987654321"))
+cursor.execute("INSERT INTO users (name, email, password, dob, gender, phone, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+               ("test", "test@gmail.com", "test", "1990-01-01", "Female", "123456789", "../img/profile.png"))
+cursor.execute("INSERT INTO users (name, email, password, dob, gender, phone, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+               ("pp", "pp@gmail.com", "pp", "1985-05-20", "Male", "987654321", "../img/profile.png"))
 
-cursor.execute("INSERT INTO bus (car_plate, driver_name, star_rating, rating_num, no_of_seat, bus_type) VALUES (?, ?, ?, ?, ?, ?)",
-               ("JKB1234", "John Driver", 4.5, 30, 40, "Express"))
-cursor.execute("INSERT INTO bus (car_plate, driver_name, star_rating, rating_num, no_of_seat, bus_type) VALUES (?, ?, ?, ?, ?, ?)",
-               ("KKK5678", "Sarah Wheels", 4.8, 50, 30, "Luxury"))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Grand Paragon Hotel",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Opp Menara TH",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("SMK Munshi Abdullah Kulai",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Kampung Baru Masai",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("JB Sentral",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Opp Vista Seri Alam",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Maybank Bandar Seri Alam",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Wisma Peladang",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Opp Taman Putri Persiaran Sri Putri 3(1)",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Terminal Bas Masai",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("JNT Taman Masai Utama",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Shell Kulai",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("SK Seri Alam 2",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Danga City Mall",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Stadium Kulai",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Wisma Persekutuan",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Opp Johor Tourist Information Center",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Opp Sekolah Kebangsaan IJ Convent",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Pangsapuri Sri Ilham",))
+cursor.execute("INSERT INTO busStops (name) VALUES (?)", ("Terminal Kulai",))
 
-cursor.execute("INSERT INTO bus_schedule (car_plate, from_location, to_location, date, time) VALUES (?, ?, ?, ?, ?)",
-               ("JKB1234", "Pellon Sta", "KKKL", "2025-06-01", "08:00"))
-cursor.execute("INSERT INTO bus_schedule (car_plate, from_location, to_location, date, time) VALUES (?, ?, ?, ?, ?)",
-               ("KKK5678", "KKKL", "Pellon Sta", "2025-06-02", "15:00"))
-cursor.execute("INSERT INTO bus_schedule (car_plate, from_location, to_location, date, time) VALUES (?, ?, ?, ?, ?)",
-               ("JKB1234", "a", "KKKL", "2025-06-01", "08:00"))
-cursor.execute("INSERT INTO bus_schedule (car_plate, from_location, to_location, date, time) VALUES (?, ?, ?, ?, ?)",
-               ("KKK5678", "b", "Pellon Sta", "2025-06-02", "15:00"))
-cursor.execute("INSERT INTO bus_schedule (car_plate, from_location, to_location, date, time) VALUES (?, ?, ?, ?, ?)",
-               ("JKB1234", "c", "KKKL", "2025-06-01", "08:00"))
-cursor.execute("INSERT INTO bus_schedule (car_plate, from_location, to_location, date, time) VALUES (?, ?, ?, ?, ?)",
-               ("KKK5678", "d", "Pellon Sta", "2025-06-02", "15:00"))
-
-cursor.execute("INSERT INTO booking (user_id, schedule_id, no_of_passenger) VALUES (?, ?, ?)",
-               (1, 1, 2))
-cursor.execute("INSERT INTO booking (user_id, schedule_id, no_of_passenger) VALUES (?, ?, ?)",
-               (2, 2, 1))
+cursor.execute('''
+INSERT INTO booking (user_id, departure, destination, date, time, no_of_passenger)
+VALUES (?, ?, ?, ?, ?, ?)
+''', (1, 'JB Sentral', 'Grand Paragon Hotel', '2025-05-15', 900, 2))
+cursor.execute('''
+INSERT INTO booking (user_id, departure, destination, date, time, no_of_passenger)
+VALUES (?, ?, ?, ?, ?, ?)
+''', (2, 'Terminal Kulai', 'KSL City', '2025-05-18', 1100, 1))
+cursor.execute('''
+INSERT INTO booking (user_id, departure, destination, date, time, no_of_passenger)
+VALUES (?, ?, ?, ?, ?, ?)
+''', (1, 'Regency Specialist Hospital', 'Opp Wisma Persekutuan', '2025-05-20', 1430, 3))
+cursor.execute('''
+INSERT INTO booking (user_id, departure, destination, date, time, no_of_passenger)
+VALUES (?, ?, ?, ?, ?, ?)
+''', (2, 'Pusat Latihan JPJ', 'Taman Kota Kulai', '2025-05-22', 830, 4))
+cursor.execute('''
+INSERT INTO booking (user_id, departure, destination, date, time, no_of_passenger)
+VALUES (?, ?, ?, ?, ?, ?)
+''', (1, 'Opp Holiday Plaza', 'Maybank Bandar Seri Alam', '2025-05-25', 1015, 1))
 
 # Commit and close
 conn.commit()

@@ -1,6 +1,6 @@
 // UI.tsx
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 /**
@@ -78,22 +78,37 @@ export const SearchButton: React.FC<{
  * InputField Component
  */
 export const InputWithLabel: React.FC<{
-    label: string;
     placeholder: string;
     value: string;
-    onChange: (text: string) => void;
-    secureTextEntry?: boolean; // Optional for password input
-}> = ({ label, placeholder, value, onChange, secureTextEntry = false }) => (
-    <View style={styles.inputContainer}>
+    onChangeText: (text: string) => void;
+    style?: any;
+    multiline?: boolean;
+    numberOfLines?: number;
+    secureTextEntry?: boolean;
+}> = ({ placeholder, value, onChangeText, style, multiline, numberOfLines, secureTextEntry }) => (
+    <View style={[styles.inputContainer, style]}>
         <TextInput
             style={styles.inputField}
-            value={value}
-            onChangeText={onChange}
             placeholder={placeholder}
-            placeholderTextColor="#888"
+            value={value}
+            onChangeText={onChangeText}
+            multiline={multiline}
+            numberOfLines={numberOfLines}
             secureTextEntry={secureTextEntry}
         />
     </View>
+);
+
+/**
+ * SearchButton Component
+ */
+export const SendButton: React.FC<{
+    title: string;
+    onPress: () => void;
+}> = ({ title, onPress}) => (
+    <TouchableOpacity style={styles.SendButton} onPress={onPress}>
+        <Text style={styles.sendText}>{title}</Text>
+    </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
@@ -177,11 +192,11 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        //alignItems: "center",
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 8,
-        padding: 1,
+        padding: 1, // Increased padding for better touch area
         backgroundColor: '#fff',
         marginVertical: 10,
     },
@@ -190,5 +205,26 @@ const styles = StyleSheet.create({
         color: '#2c2a2a',
         fontFamily: 'Nunito',
         fontWeight: 'bold',
+        flex: 1, // Allow the input field to take up available space
+        paddingHorizontal: 10, // Add padding to the input field itself
+    },
+    multiline: {
+        alignItems: "flex-start",
+    },
+    SendButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#1b204b',
+        paddingVertical: 14,
+        borderRadius: 30,
+        marginVertical: 20,
+    },
+    sendText: {
+        color: '#ffffff',
+        fontSize: 18,
+        fontFamily: 'Nunito',
+        fontWeight: 'bold',
     }
+
 });

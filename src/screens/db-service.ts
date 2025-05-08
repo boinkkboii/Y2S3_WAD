@@ -51,7 +51,7 @@ export const upsertUserProfile = async (
     dob: string,
     phone: string,
     email: string,
-    profile_image: 'default',
+    profile_image: string = 'default',
 ) => {
     const existingProfile = await getUserProfile(db);
 
@@ -72,6 +72,8 @@ export const upsertUserProfile = async (
         await db.executeSql(insertQuery, [name, dob, phone, email, profile_image]);
         console.log('User profile inserted.');
     }
+
+    
 };
 
 export const updateUserProfileImage = async (db, uri) => {

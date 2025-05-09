@@ -1,29 +1,29 @@
-// BookingScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingsForUser } from '../services/sqlite';
 import { useNavigation } from '@react-navigation/native';
 
 const BookingScreen = () => {
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(null);  // Store the userId from AsyncStorage
   const [bookings, setBookings] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
     const loadBookings = async () => {
+      const storedUserId = await AsyncStorage.getItem('loggedInUserId');
+      if (!storedUserId) {
+        Alert.alert('Error', 'Please log in to view your bookings.');
+        return;
+      }
+      setUserId(storedUserId); // Store the logged-in user ID
       try {
-        const storedUserId = await AsyncStorage.getItem('loggedInUserId');
-        if (storedUserId) {
-          const id = parseInt(storedUserId, 10);
-          setUserId(id);
-
-          const db = await getDBConnection();
-          const result = await getBookingsForUser(db, id);
-          setBookings(result);
-        }
+        const db = await getDBConnection();
+        const result = await getBookingsForUser(db, storedUserId);
+        setBookings(result);
       } catch (error) {
         console.error('Error loading user bookings:', error);
+        Alert.alert('Error', 'Failed to load bookings.');
       }
     };
 
@@ -35,21 +35,25 @@ const BookingScreen = () => {
       {bookings.length > 0 ? (
         <FlatList
           data={bookings}
-          keyExtractor={(item) => item.booking_id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('BookingDetail', {
-                  bookingId: item.booking_id,
-                  userId: userId,
-                })
-              }
-              style={styles.bookingItem}
-            >
-              <Text style={styles.bookingText}>{item.departure} → {item.destination}</Text>
-              <Text>{item.date} at {item.time}</Text>
-            </TouchableOpacity>
-          )}
+          keyExtractor={(item) => item.booking_id ? item.booking_id.toString() : Math.random().toString()}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('BookingDetail', {
+                    bookingId: item.booking_id,
+                    userId: userId,  // Pass the userId to the next screen
+                  })
+                }
+                style={styles.bookingItem}
+              >
+                <Text style={styles.bookingText}>
+                  {item.departure} → {item.destination}
+                </Text>
+                <Text>{item.date} at {item.time}</Text>
+              </TouchableOpacity>
+            );
+          }}
         />
       ) : (
         <Text>No bookings found.</Text>

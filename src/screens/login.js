@@ -16,14 +16,17 @@ const LoginScreen = ({ navigation }) => {
     try {
       const db = await getDBConnection();
       const users = await getUsers(db);
-      const user = users.find(u => u.email === email && u.password === password);
+      const user = users.find((u) => u.email === email && u.password === password);
 
       if (!user) {
         Alert.alert('Error', 'Invalid credentials');
         return;
       }
 
+      // Store the logged-in user's ID in AsyncStorage
       await AsyncStorage.setItem('loggedInUserId', user.id.toString());
+
+      // Navigate to ProfileMain screen after successful login
       navigation.replace('ProfileMain');
     } catch (e) {
       console.error(e);
@@ -33,8 +36,19 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TextInput placeholder="Email" onChangeText={setEmail} value={email} style={styles.input} />
-      <TextInput placeholder="Password" secureTextEntry onChangeText={setPassword} value={password} style={styles.input} />
+      <TextInput
+        placeholder="Email"
+        onChangeText={setEmail}
+        value={email}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Password"
+        secureTextEntry
+        onChangeText={setPassword}
+        value={password}
+        style={styles.input}
+      />
       <Button title="Login" onPress={handleLogin} />
     </View>
   );

@@ -43,8 +43,8 @@ const BookingDetailScreen = ({ route, navigation }) => {
       <Text>To: {booking.destination}</Text>
       <Text>Date: {booking.date}</Text>
       <Text>Time: {booking.time}</Text>
+      <Text>Price: {booking.price}</Text>
       <Text>Passengers: {booking.no_of_passenger}</Text>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
     </ScrollView>
     
   );

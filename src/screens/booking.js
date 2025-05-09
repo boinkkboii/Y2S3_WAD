@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    flex: 1,
+    flex: 0.5,
   },
   infoContainer: {
     padding: 10,

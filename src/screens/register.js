@@ -4,6 +4,8 @@ import { getDBConnection, createUser, getUsers } from '../services/sqlite';  // 
 import { PickerWithLabel } from '../UI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
+
 
 const RegisterScreen = () => {
     const navigation = useNavigation();
@@ -15,6 +17,8 @@ const RegisterScreen = () => {
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');
     const [phone, setPhone] = useState('');
+    const { colors } = useTheme();
+
 
     // Handle the registration form submission
     const handleRegister = async () => {
@@ -59,31 +63,35 @@ const RegisterScreen = () => {
             style={{ flex: 1 }}
         >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-            <Text style={styles.header}>User Registration</Text>
+            <Text style={[styles.header, { color: colors.text }]}>User Registration</Text>
 
-            <Text>Name</Text>
+            <Text style={{ color: colors.text }}>Name</Text>
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter your name"
+                placeholderTextColor={colors.text}
+
             />
 
-            <Text>Email</Text>
+            <Text style={{ color: colors.text }}>Email</Text>
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
                 value={email}
                 onChangeText={setEmail}
                 placeholder="Enter your email"
                 keyboardType="email-address"
+                placeholderTextColor={colors.text}
             />
 
-            <Text>Date of Birth</Text>
+            <Text style={{ color: colors.text }}>Date of Birth</Text>
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
                 value={dob}
                 onChangeText={setDob}
                 placeholder="Enter your date of birth (YYYY-MM-DD)"
+                placeholderTextColor={colors.text}
             />
 
             <PickerWithLabel
@@ -96,29 +104,32 @@ const RegisterScreen = () => {
                 ]}
                 label="Gender"
             />
-
-            <Text>Phone Number</Text>
+            <Text style={{ color: colors.text }}>Phone Number</Text>
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
                 value={phone}
                 onChangeText={setPhone}
                 placeholder="Enter your phone number"
                 keyboardType="phone-pad"
+                placeholderTextColor={colors.text}
             />
 
             <TextInput 
-                style={styles.input}
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
                 value={password}
                 onChangeText={setPassword} 
                 placeholder="Password" 
                 secureTextEntry 
+                placeholderTextColor={colors.text}
             />
+
             <TextInput 
-                style={styles.input}
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword} 
                 placeholder="Confirm Password" 
                 secureTextEntry 
+                placeholderTextColor={colors.text}
             />
             <View style={{ marginBottom: 40 }}>
                 <Button title="Register" onPress={handleRegister} />

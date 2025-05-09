@@ -11,6 +11,7 @@ export default function RootNavigator() {
         <Stack.Navigator>
             <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="BookingDetails" component={BookingDetailScreen} />
         </Stack.Navigator>
     );
 }

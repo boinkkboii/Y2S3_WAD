@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+/* eslint-disable prettier/prettier */
+import React, { useState , useContext} from 'react';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TouchableField, SegmentedButtons, SearchButton } from '../UI';
 import { formatted } from '../utility';
-import { Platform } from 'react-native';
+import { ThemeContext } from '../context/ThemeContext'; // import ThemeContext
+import { LightTheme, DarkTheme } from '../context/theme'; // import theme styles
 
 const AddBookingScreen = () => {
   const [from, setFrom] = useState('');
@@ -13,36 +15,53 @@ const AddBookingScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showReturnPicker, setShowReturnPicker] = useState(false);
   const [dateOption, setDateOption] = useState('Today');
+  const { isDark } = useContext(ThemeContext); // get the theme state
+  const theme = isDark ? DarkTheme : LightTheme; // decide the theme based on the current state
 
-  const onSelectDateOption = (opt) => {
-    setDateOption(opt);
-    // Adjust the date based on selection
-    if (opt === 'Today') setDate(new Date());
-    else if (opt === 'Tomorrow') {
-      const t = new Date();
-      t.setDate(t.getDate() + 1);
-      setDate(t);
+  const onSelectDateOption = (option) => {
+    setDateOption(option);
+    const baseDate = new Date();
+    if (option === 'Today') {
+      setDate(baseDate);
+    } else if (option === 'Tomorrow') {
+      baseDate.setDate(baseDate.getDate() + 1);
+      setDate(baseDate);
     }
   };
 
+  const handleSearch = () => {
+    // Replace with actual search logic
+    console.log('Searching buses from:', from, 'to:', to, 'on:', formatted(date));
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Bus Tickets</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.heading, { color: theme.text }]}>Bus Tickets</Text>
+
       <View style={styles.card}>
+        {/* From City Picker */}
         <TouchableField
           icon="bus"
           placeholder="From"
           label=""
           value={from}
-          onPress={() => { /* open city picker */ }}
+          onPress={() => {
+            // Open 'From' city picker logic
+          }}
         />
+
+        {/* To City Picker */}
         <TouchableField
           icon="bus"
           placeholder="To"
           label=""
           value={to}
-          onPress={() => { /* open city picker */ }}
+          onPress={() => {
+            // Open 'To' city picker logic
+          }}
         />
+
+        {/* Departure Date */}
         <TouchableField
           icon="calendar"
           label="Date of departure              "
@@ -50,22 +69,27 @@ const AddBookingScreen = () => {
           value={formatted(date)}
           onPress={() => setShowDatePicker(true)}
         />
+
         {showDatePicker && (
           <DateTimePicker
             value={date}
             mode="date"
             display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(_, sd) => {
+            onChange={(_, selectedDate) => {
               setShowDatePicker(false);
-              if (sd) setDate(sd);
+              if (selectedDate) setDate(selectedDate);
             }}
           />
         )}
+
+        {/* Today / Tomorrow Buttons */}
         <SegmentedButtons
           options={['Today', 'Tomorrow']}
           selected={dateOption}
           onSelect={onSelectDateOption}
         />
+
+        {/* Return Date (Optional) */}
         <TouchableField
           icon="calendar"
           placeholder="Date of return (optional)"
@@ -73,19 +97,26 @@ const AddBookingScreen = () => {
           value={returnDate ? formatted(returnDate) : ''}
           onPress={() => setShowReturnPicker(true)}
         />
+
         {showReturnPicker && (
           <DateTimePicker
             value={returnDate || new Date()}
             mode="date"
             display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(_, sd) => {
+            onChange={(_, selectedDate) => {
               setShowReturnPicker(false);
-              if (sd) setReturnDate(sd);
+              if (selectedDate) setReturnDate(selectedDate);
             }}
           />
         )}
       </View>
-      <SearchButton icon="magnify" title="Search buses" onPress={() => { /* search logic */ }} />
+
+      {/* Search Button */}
+      <SearchButton
+        icon="magnify"
+        title="Search buses"
+        onPress={handleSearch}
+      />
     </View>
   );
 };
@@ -113,6 +144,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  
 });
 
 export default AddBookingScreen;

@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getUsers } from '../services/sqlite';
+import { useTheme } from '@react-navigation/native';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { colors } = useTheme();
+
+  
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -32,9 +36,34 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput placeholder="Email" onChangeText={setEmail} value={email} style={styles.input} />
-      <TextInput placeholder="Password" secureTextEntry onChangeText={setPassword} value={password} style={styles.input} />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <TextInput
+        placeholder="Email"
+        placeholderTextColor={colors.text}
+        onChangeText={setEmail}
+        value={email}
+        style={[
+          styles.input,
+          {
+            color: colors.text,
+            borderBottomColor: colors.border,
+          },
+        ]}
+      />
+      <TextInput
+        placeholder="Password"
+        placeholderTextColor={colors.text}
+        secureTextEntry
+        onChangeText={setPassword}
+        value={password}
+        style={[
+          styles.input,
+          {
+            color: colors.text,
+            borderBottomColor: colors.border,
+          },
+        ]}
+      />
       <Button title="Login" onPress={handleLogin} />
     </View>
   );
@@ -43,6 +72,14 @@ const LoginScreen = ({ navigation }) => {
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-  container: { padding: 20 },
-  input: { marginBottom: 10, borderBottomWidth: 1, padding: 8 },
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'top',
+  },
+  input: {
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    padding: Platform.OS === 'ios' ? 12 : 8,
+  },
 });

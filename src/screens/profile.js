@@ -1,15 +1,22 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useContext } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getUserById, updateUserProfileImage } from '../services/sqlite';
 import { TouchableField } from '../UI';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { ThemeContext } from '../context/ThemeContext';
+import { LightTheme, DarkTheme } from '../context/theme';
+import { useTheme } from '@react-navigation/native';
+
 
 const ProfileScreen = ({ navigation }) => {
     const [user, setUser] = useState(null);
     const [checkingLogin, setCheckingLogin] = useState(true);
     const defaultImage = require('../img/profile.png');
+    const { isDark } = useContext(ThemeContext);
+    const theme = isDark ? DarkTheme : LightTheme;
+    const { colors } = useTheme(); 
 
     const loadProfile = async () => {
         try {
@@ -77,7 +84,7 @@ const ProfileScreen = ({ navigation }) => {
     if (checkingLogin) return <Text>Loading...</Text>;
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}>
             {!user ? (
                 <>
                     {/* Display Login and Register if the user is not logged in */}
@@ -100,12 +107,13 @@ const ProfileScreen = ({ navigation }) => {
 
                         <View style={styles.profileRow}>
                             <View style={styles.textInfo}>
-                                <Text style={styles.heading}>My Profile</Text>
-                                <Text style={styles.infoText}>{user.name}</Text>
-                                <Text style={styles.infoText}>{user.email}</Text>
-                                <Text style={styles.infoText}>{user.dob}</Text>
-                                <Text style={styles.infoText}>{user.gender}</Text>
-                                <Text style={styles.infoText}>{user.phone}</Text>
+                                <Text style={[styles.heading, { color: colors.text }]}>My Profile</Text>
+                                <Text style={[styles.infoText, { color: colors.text }]}>{user.name}</Text>
+                                <Text style={[styles.infoText, { color: colors.text }]}>{user.email}</Text>
+                                <Text style={[styles.infoText, { color: colors.text }]}>{user.dob}</Text>
+                                <Text style={[styles.infoText, { color: colors.text }]}>{user.gender}</Text>
+                                <Text style={[styles.infoText, { color: colors.text }]}>{user.phone}</Text>
+
                                 
                             </View>
 

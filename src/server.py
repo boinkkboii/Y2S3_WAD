@@ -33,4 +33,5 @@ def handle_request(data):
 #         time.sleep(60)
 
 if __name__ == '__main__':
+    print("Starting WebSocket Server on http://localhost:5000 ...")
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

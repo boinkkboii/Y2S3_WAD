@@ -126,7 +126,6 @@ const NewBookingScreen = () => {
         }));
         setAvailableTimes(outboundWithTimes);
         setShowTimesModal(true);
-        console.log('availableTimes:', availableTimes);
       }
     }
   };
@@ -156,7 +155,7 @@ const NewBookingScreen = () => {
           onPress: async () => {
             try {
               const db = await getDBConnection();
-              await createBooking(db, userId, route_id, passengerCount);
+              await createBooking(db, userId, route_id, passengerCount, formatted(date));
               setShowTimesModal(false);
               Alert.alert('Success', 'Booking created successfully!');
             } catch (err) {

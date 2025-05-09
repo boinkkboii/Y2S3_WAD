@@ -140,12 +140,12 @@ export const getBookingsForUser = async (
     const bookings: any[] = [];
 
     const query = `
-      SELECT b.booking_id, b.user_id, b.route_id, b.no_of_passenger, 
-             r.departure, r.destination, r.date, r.time, r.price, r.duration
+      SELECT b.booking_id, b.user_id, b.route_id, b.no_of_passenger, b.date,
+             r.departure, r.destination, r.time, r.price, r.duration
       FROM bookings b
       JOIN routes r ON b.route_id = r.route_id
       WHERE b.user_id = ?
-      ORDER BY r.date, r.time;
+      ORDER BY b.date, r.time;
     `;
 
     const results = await db.executeSql(query, [userId]);
@@ -166,12 +166,12 @@ export const getBookingDetailsById = async (db: SQLiteDatabase, bookingId: numbe
   try {
     const query = `
       SELECT 
-        b.*, 
-        r.date, 
+        b.*,  
         r.time, 
         r.departure, 
         r.destination,
-        r.price
+        r.price,
+        r.duration
       FROM bookings b
       JOIN routes r ON b.route_id = r.route_id
       WHERE b.booking_id = ?
@@ -192,14 +192,15 @@ export const createBooking = async (
   db: SQLiteDatabase,
   user_id: number,
   route_id: number,
-  no_of_passenger: number
+  no_of_passenger: number,
+  date: string
 ) => {
   try {
     const query = `
-      INSERT INTO bookings (user_id, route_id, no_of_passenger)
-      VALUES (?, ?, ?)
+      INSERT INTO bookings (user_id, route_id, no_of_passenger, date)
+      VALUES (?, ?, ?, ?)
     `;
-    await db.executeSql(query, [user_id, route_id, no_of_passenger]);
+    await db.executeSql(query, [user_id, route_id, no_of_passenger, date]);
   } catch (error) {
     console.error(error);
     throw Error('Failed to create booking!');
@@ -209,15 +210,16 @@ export const createBooking = async (
 export const updateBooking = async (
   db: SQLiteDatabase,
   booking_id: string,
+  date: string,
   no_of_passenger: number
 ) => {
   try {
     const query = `
       UPDATE bookings 
-      SET no_of_passenger = ?
+      SET no_of_passenger = ?, date = ?
       WHERE booking_id = ?
     `;
-    await db.executeSql(query, [no_of_passenger, booking_id]);
+    await db.executeSql(query, [no_of_passenger, date, booking_id]);
   } catch (error) {
     console.error(error);
     throw Error('Failed to update booking!');
@@ -249,7 +251,7 @@ export const getBusStops = async (db: SQLiteDatabase): Promise<any[]> => {
 //Routes function
 export const getRoutes = async (db: SQLiteDatabase): Promise<any[]> => {
   try {
-    const query = `SELECT * FROM routes ORDER BY date, time`;
+    const query = `SELECT * FROM routes ORDER BY time`;
     const results = await db.executeSql(query);
     return results.flatMap(result => result.rows.raw());
   } catch (error) {

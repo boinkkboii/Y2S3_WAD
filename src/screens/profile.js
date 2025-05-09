@@ -24,7 +24,7 @@ const ProfileScreen = ({ navigation }) => {
   const [checkingLogin, setCheckingLogin] = useState(true);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [formData, setFormData] = useState({});
-  const defaultImage = require('../img/bus.png');
+  const defaultImage = require('../img/profile.png');
 
   const loadProfile = async () => {
     try {
@@ -164,7 +164,7 @@ const ProfileScreen = ({ navigation }) => {
                     label="Gender"
                     selectedValue={formData.gender || user.gender}
                     onValueChange={(val) => setFormData({ ...formData, gender: val })}
-                    items={[{ label: 'Male', value: 'Male' }, { label: 'Female', value: 'Female' }, { label: 'nub', value: 'Others' }]}
+                    items={[{ key: 'Male', value: 'Male' }, { key: 'Female', value: 'Female' }, { key: 'nub', value: 'Others' }]}
                   />
                   <TextInput style={styles.input} placeholder="Old Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, oldPassword: text })} />
                   <TextInput style={styles.input} placeholder="New Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, newPassword: text })} />

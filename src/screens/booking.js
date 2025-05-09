@@ -89,10 +89,16 @@ const BookingScreen = () => {
           longitudeDelta: 0.05, // You can adjust this for zoom level
         }}
         zoomEnabled={true}
+        scrollEnabled={true}
+        pitchEnabled={true}
+        rotateEnabled={true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        toolbarEnabled={true}
       >
         <Marker coordinate={userLocation} title="Your Location" />
-        <Marker coordinate={startStopCoords} title="Start: KSL City" description={`Weather: ${startWeather}`} />
-        <Marker coordinate={endStopCoords} title="End: JB Sentral Bus Terminal" description={`Weather: ${endWeather}`} />
+        <Marker coordinate={startStopCoords} title={`Start: ${startStopName}`} description={`Weather: ${startWeather}`} />
+        <Marker coordinate={endStopCoords} title={`End: ${endStopName}`} description={`Weather: ${endWeather}`} />
         <Polyline
           coordinates={[startStopCoords, endStopCoords]}
           strokeColor="#000"
@@ -100,9 +106,9 @@ const BookingScreen = () => {
         />
       </MapView>
       <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>Start Location: KSL City Mall</Text>
+        <Text style={styles.infoText}>Start Location: {startStopName}</Text>
         <Text style={styles.infoText}>Weather: {startWeather}</Text>
-        <Text style={styles.infoText}>End Location: JB Sentral</Text>
+        <Text style={styles.infoText}>End Location: {endStopName}</Text>
         <Text style={styles.infoText}>Weather: {endWeather}</Text>
       </View>
     </View>
@@ -116,7 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    flex: 1,
+    flex: 0.5,
   },
   infoContainer: {
     padding: 10,

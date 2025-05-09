@@ -1,34 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingsForUser } from '../services/sqlite';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const BookingScreen = () => {
   const [userId, setUserId] = useState(null);  // Store the userId from AsyncStorage
   const [bookings, setBookings] = useState([]);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const loadBookings = async () => {
-      const storedUserId = await AsyncStorage.getItem('loggedInUserId');
-      if (!storedUserId) {
-        Alert.alert('Error', 'Please log in to view your bookings.');
-        return;
-      }
-      setUserId(storedUserId); // Store the logged-in user ID
-      try {
-        const db = await getDBConnection();
-        const result = await getBookingsForUser(db, storedUserId);
-        setBookings(result);
-      } catch (error) {
-        console.error('Error loading user bookings:', error);
-        Alert.alert('Error', 'Failed to load bookings.');
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const loadBookings = async () => {
+        const storedUserId = await AsyncStorage.getItem('loggedInUserId');
+        if (!storedUserId) {
+          Alert.alert('Error', 'Please log in to view your bookings.');
+          return;
+        }
+        setUserId(storedUserId); // Store the logged-in user ID
+        try {
+          const db = await getDBConnection();
+          const result = await getBookingsForUser(db, storedUserId);
+          setBookings(result);
+        } catch (error) {
+          console.error('Error loading user bookings:', error);
+          Alert.alert('Error', 'Failed to load bookings.');
+        }
+      };
 
-    loadBookings();
-  }, []);
+      loadBookings();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

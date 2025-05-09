@@ -209,17 +209,15 @@ export const createBooking = async (
 export const updateBooking = async (
   db: SQLiteDatabase,
   booking_id: string,
-  user_id: number,
-  route_id: number,
   no_of_passenger: number
 ) => {
   try {
     const query = `
       UPDATE bookings 
-      SET user_id = ?, route_id = ?, no_of_passenger = ?
+      SET no_of_passenger = ?
       WHERE booking_id = ?
     `;
-    await db.executeSql(query, [user_id, route_id, no_of_passenger, booking_id]);
+    await db.executeSql(query, [no_of_passenger, booking_id]);
   } catch (error) {
     console.error(error);
     throw Error('Failed to update booking!');

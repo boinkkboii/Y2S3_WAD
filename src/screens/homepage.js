@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { io } from 'socket.io-client';  // Import socket.io-client
 
 // needed if you want to use the API data in the app screens
 import { getRoutesData } from '../api/routes';        // Import routes API
@@ -18,6 +19,12 @@ const HomePage = () => {
   // const [stops, setStops] = useState('');
   const [trips, setTrips] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Socket.IO state
+  const [realTimeLocation, setRealTimeLocation] = useState(null);  // State for real-time location updates
+
+  // Connect to the Socket.IO server
+  const socket = io('http://localhost:5000');  // Connect to the server (adjust to your server URL)
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -44,7 +51,26 @@ const HomePage = () => {
     };
 
     fetchAllData();
+
+    // Listen for real-time location updates from the server
+    socket.on('location_update', (data) => {
+      console.log('Real-time location update:', data);
+      setRealTimeLocation(data);  // Update state with the received data
+    });
+
+    // Cleanup: Disconnect socket when the component is unmounted
+    return () => {
+      socket.off('location_update');
+    };
   }, []);
+
+  // Send location data to the server (this is just an example, you can trigger this based on user input or other events)
+  const sendLocation = () => {
+    const location = { lat: 1.4965, lng: 103.7637 };  // Dummy location (can be dynamic)
+
+    socket.emit('send_location', location);  // Emit location to the server
+    console.log('Location sent:', location);
+  };
 
   if (loading) {
     return (
@@ -64,62 +90,22 @@ const HomePage = () => {
         <Text style={styles.content}>{routes}</Text>
       </View>
 
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Agency Data:</Text>
-        <Text style={styles.content}>{agency}</Text>
-      </View> */}
-
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Calendar Data:</Text>
-        <Text style={styles.content}>{calendar}</Text>
-      </View> */}
-
-      {/* too many data and caused the app to crash */}
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Stop Times Data (First 200 entries):</Text>
-        <Text style={styles.content}>
-          {(() => {
-            try {
-              const parsed = JSON.parse(stopTimes);
-              const sliced = parsed.slice(0, 200);
-              return JSON.stringify(sliced, null, 2);
-            } catch (e) {
-              return stopTimes; // fallback in case parsing fails
-            }
-          })()}
+      {/* Button to send a test location to the server */}
+      <View style={styles.section}>
+        <Text onPress={sendLocation} style={styles.button}>
+          Send Location to Server
         </Text>
-      </View> */}
+      </View>
 
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Stops Data (First 200 entries):</Text>
-        <Text style={styles.content}>
-          {(() => {
-            try {
-              const parsed = JSON.parse(stops);
-              const sliced = parsed.slice(0, 200);
-              return JSON.stringify(sliced, null, 2);
-            } catch (e) {
-              return stops; // fallback if parsing fails
-            }
-          })()}
-        </Text>
-      </View> */}
-
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Trips Data (First 200 entries):</Text>
-        <Text style={styles.content}>
-          {(() => {
-            try {
-              const parsed = JSON.parse(trips);
-              const sliced = parsed.slice(0, 200);
-              return JSON.stringify(sliced, null, 2);
-            } catch (e) {
-              return trips; // fallback if parsing fails
-            }
-          })()}
-        </Text>
-      </View> */}
-
+      {/* Display real-time location updates */}
+      {realTimeLocation && (
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Real-time Location Update:</Text>
+          <Text style={styles.content}>
+            Lat: {realTimeLocation.lat}, Lng: {realTimeLocation.lng}
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -150,5 +136,12 @@ const styles = StyleSheet.create({
   content: {
     fontSize: 14,
     color: '#7f8c8d',
+  },
+  button: {
+    backgroundColor: '#3498db',
+    color: '#fff',
+    padding: 10,
+    textAlign: 'center',
+    borderRadius: 5,
   },
 });

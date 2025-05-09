@@ -85,9 +85,10 @@ const BookingScreen = () => {
         initialRegion={{
           latitude: userLocation.latitude,
           longitude: userLocation.longitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
+          latitudeDelta: 0.05, // You can adjust this for zoom level
+          longitudeDelta: 0.05, // You can adjust this for zoom level
         }}
+        zoomEnabled={true}
       >
         <Marker coordinate={userLocation} title="Your Location" />
         <Marker coordinate={startStopCoords} title="Start: KSL City" description={`Weather: ${startWeather}`} />

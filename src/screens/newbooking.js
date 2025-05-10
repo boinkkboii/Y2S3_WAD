@@ -193,7 +193,7 @@ const NewBookingScreen = ({ route }) => {
       <View style={styles.card}>
         <TouchableField
           icon="bus"
-          placeholder="From"
+          label="From : "
           value={from}
           onPress={() => {
             setSelectedField('from');
@@ -203,7 +203,7 @@ const NewBookingScreen = ({ route }) => {
         />
         <TouchableField
           icon="bus"
-          placeholder="To"
+          label="To :      "
           value={to}
           onPress={() => {
             setSelectedField('to');
@@ -213,7 +213,8 @@ const NewBookingScreen = ({ route }) => {
         />
         <TouchableField
           icon="calendar"
-          placeholder="Date of departure"
+          label="Date of departure  "
+          placeholder="Select date"
           value={formatted(date)}
           onPress={() => setShowDatePicker(true)}
         />

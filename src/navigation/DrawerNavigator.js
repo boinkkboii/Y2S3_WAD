@@ -4,7 +4,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ThemeContext } from '../context/ThemeContext';
 import TabNavigator from './TabNavigator';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Alert } from 'react-native';
 import ContactUs from '../screens/contactUs';
 import Settings from '../screens/settings';
 import Version from '../screens/version';
@@ -153,14 +153,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: '#000'
+    color: '#000',
   },
   infoText: {
     fontSize: 16,
     marginBottom: 2,
     fontFamily: 'Nunito',
     zIndex: 2,
-    color: '#1b204b'
+    color: '#1b204b',
   },
   backgroundImage: {
     resizeMode: 'cover',

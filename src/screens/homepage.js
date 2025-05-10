@@ -124,29 +124,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 4,
-    color: "#000"
+    color: '#000',
   },
   bannerText: {
     fontSize: 14,
-    color: "#1b204b"
+    color: '#1b204b',
   },
   title: {
     fontSize: 20,
-    fontWeight: '600',
     marginBottom: 10,
     fontFamily: 'Nunito',
     fontWeight: 'bold',
     color: '#000',
-    marginLeft: 10
+    marginLeft: 10,
   },
   subtitle: {
     fontSize: 18,
-    fontWeight: '500',
     marginBottom: 10,
     fontFamily: 'Nunito',
     fontWeight: 'bold',
     color: '#000',
-    marginLeft: 10
+    marginLeft: 10,
   },
   routeItem: {
     backgroundColor: '#f1f1f1',
@@ -156,7 +154,7 @@ const styles = StyleSheet.create({
   },
   routeText: {
     fontSize: 14,
-    color: '#1b204b'
+    color: '#1b204b',
   },
 });
 

@@ -20,7 +20,7 @@ export default function DrawerNavigator() {
   return (
     <Drawer.Navigator
       screenOptions={{
-        drawerStyle: { width: '45%', backgroundColor: 'lightgrey' },
+        drawerStyle: { width: '60%', backgroundColor: 'lightgrey' },
         drawerActiveTintColor: 'blue',
         drawerActiveBackgroundColor: 'skyblue',
       }}

@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useContext } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ThemeContext } from '../context/ThemeContext';
 import TabNavigator from './TabNavigator';
 import ContactUs from '../screens/contactUs';
 import Settings from '../screens/settings';
@@ -17,12 +18,23 @@ const VersionIcon = () => <MaterialCommunityIcons name="alpha-v-circle" size={24
 const AboutUsIcon = () => <MaterialCommunityIcons name="information" size={24} />;
 
 export default function DrawerNavigator() {
+
+    const { isDark } = useContext(ThemeContext);
+
   return (
     <Drawer.Navigator
       screenOptions={{
-        drawerStyle: { width: '60%', backgroundColor: 'lightgrey' },
-        drawerActiveTintColor: 'blue',
-        drawerActiveBackgroundColor: 'skyblue',
+        drawerStyle: {
+          width: '45%',
+          backgroundColor: isDark ? '#1a1a1a' : 'lightgrey', // Dark drawer background
+        },
+        drawerActiveTintColor: isDark ? '#fff' : 'blue', // Active item color
+        drawerInactiveTintColor: isDark ? '#ccc' : '#000', // Inactive item color
+        drawerActiveBackgroundColor: isDark ? '#333' : 'skyblue', // Active item background
+        headerStyle: {
+          backgroundColor: isDark ? '#121212' : '#f9f9f9',
+        },
+        headerTintColor: isDark ? '#fff' : '#000',
       }}
     >
       <Drawer.Screen

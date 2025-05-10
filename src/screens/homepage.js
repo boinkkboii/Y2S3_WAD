@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import io from 'socket.io-client';
 import SQLite from 'react-native-sqlite-storage';
+import { useNavigation } from '@react-navigation/native';
 
 // Enable SQLite debugging if needed
 SQLite.enablePromise(true);
@@ -10,6 +11,7 @@ SQLite.enablePromise(true);
 const HomePage = () => {
   const [maintenance, setMaintenance] = useState(null);
   const [routes, setRoutes] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const socket = io('http://10.0.2.2:5000/maintenance', {
@@ -61,6 +63,13 @@ const HomePage = () => {
     loadRoutesFromDB();
   }, []);
 
+  const handleRoutePress = (route) => {
+    navigation.navigate('NewBooking', {
+      departure: route.departure,
+      destination: route.destination,
+    });
+  };
+
   return (
     <View style={styles.container}>
       {maintenance && (
@@ -77,13 +86,13 @@ const HomePage = () => {
         data={routes}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <View style={styles.routeItem}>
+          <TouchableOpacity style={styles.routeItem} onPress={() => handleRoutePress(item)}>
             <Text style={styles.routeText}>From: {item.departure}</Text>
             <Text style={styles.routeText}>To: {item.destination}</Text>
             <Text style={styles.routeText}>Time: {item.time}</Text>
             <Text style={styles.routeText}>Duration: {item.duration} mins</Text>
             <Text style={styles.routeText}>Price: RM{item.price}</Text>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>

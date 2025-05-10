@@ -16,11 +16,13 @@ import { getDBConnection, getBusStops, getRoutes } from '../services/sqlite';
 import { formatted } from '../utility';
 import { createBooking } from '../services/sqlite';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-const NewBookingScreen = () => {
+const NewBookingScreen = ({ route }) => {
+  const { departure, destination } = route.params || {};
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date()); // keep this as-is
   const [dateOption, setDateOption] = useState('Today');
   const [returnDate, setReturnDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -34,6 +36,7 @@ const NewBookingScreen = () => {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [noOfPassengers, setNoOfPassengers] = useState('1');
   const [userId, setUserId] = useState(null);  // State for userId
+  
 
   useEffect(() => {
     const fetchStopsAndRoutes = async () => {
@@ -55,6 +58,10 @@ const NewBookingScreen = () => {
         //Fetch and set user 
         const storedUserId = await AsyncStorage.getItem('loggedInUserId');
         setUserId(storedUserId);
+
+        //Set departure and destination if passed from home
+        if (departure) setFrom(departure);
+        if (destination) setTo(destination);
       } catch (error) {
         console.error('Error loading routes or user:', error);
       }

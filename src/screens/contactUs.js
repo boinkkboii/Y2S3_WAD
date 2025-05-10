@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert, TouchableOpacity, Modal, Animated, Easing } from 'react-native';
 import { InputWithLabel, SendButton } from './UI';
 import { Linking } from 'react-native';
+import { isValidEmail } from '../utils/validation';
 
 const ContactUs = () => {
   const [name, setName] = useState('');
@@ -13,7 +14,12 @@ const ContactUs = () => {
   const handleSubmit = () => {
     // Simple form validation
     if (!name || !email || !message) {
-      Alert.alert('Error', 'Please fill all the fields');
+      Alert.alert('Error', 'Please fill all the fields.');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Alert.alert('Error', 'Please enter a valid email.');
       return;
     }
 

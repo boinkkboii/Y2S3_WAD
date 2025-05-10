@@ -95,11 +95,11 @@ export default function DrawerNavigator() {
         },
         drawerStyle: {
           width: '65%',
-          backgroundColor: isDark ? '#1a1a1a' : 'lightgrey', // Dark drawer background
+          backgroundColor: isDark ? '#1a1a1a' : '#fff', // Dark drawer background
         },
-        drawerActiveTintColor: isDark ? '#fff' : 'blue', // Active item color
-        drawerInactiveTintColor: isDark ? '#ccc' : '#000', // Inactive item color
-        drawerActiveBackgroundColor: isDark ? '#333' : 'skyblue', // Active item background
+        drawerActiveTintColor: isDark ? '#fff' : '#e3e3e3', // Active item color
+        drawerInactiveTintColor: isDark ? '#ccc' : '#e3e3e3', // Inactive item color
+        drawerActiveBackgroundColor: isDark ? '#333' : '#e3e3e3', // Active item background
         headerStyle: {
           backgroundColor: isDark ? '#121212' : '#f9f9f9',
         },

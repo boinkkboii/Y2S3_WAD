@@ -5,6 +5,7 @@ import { getDBConnection, createUser, getUsers } from '../services/sqlite';
 import { PickerWithLabel } from '../UI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { isValidEmail, isValidPhoneNumber, isValidDOB, isValidPassword } from '../utils/validation';
 
 const RegisterScreen = () => {
     const navigation = useNavigation();
@@ -28,17 +29,38 @@ const RegisterScreen = () => {
           Alert.alert('Passwords do not match');
           return;
         }
+        
+        if (!isValidEmail(email)) {
+          return Alert.alert('Invalid Email', 'Please enter a valid email address.');
+        }
+        
+        if (!isValidPhoneNumber(phone)) {
+          return Alert.alert('Invalid Phone Number', 'Phone number should be between 10-15 digits.');
+        }
+        
+        if (!isValidDOB(dob)) {
+          return Alert.alert('Invalid Date of Birth', 'Please enter a valid date in YYYY-MM-DD format.');
+        }
+        
+        if (!isValidPassword(password)) {
+            return Alert.alert('Invalid Password', 'Password must be at least 8 characters long.');
+        }
       
         try {
             const db = await getDBConnection();
+<<<<<<< HEAD
       
             // Check if email already exists
+=======
+
+>>>>>>> 6fd33401679a7bf30398d973fbcb8ad69fea7361
             const users = await getUsers(db);
             const emailExists = users.some(user => user.email === email);
             if (emailExists) {
               Alert.alert('Error', 'Email already registered');
               return;
             }
+<<<<<<< HEAD
       
             await createUser(db, name, email, password, dob, gender, phone);
       
@@ -46,6 +68,13 @@ const RegisterScreen = () => {
             const newUser = users.length + 1;
             await AsyncStorage.setItem('loggedInUserId', newUser.toString());
       
+=======
+            
+            // Simulate login by storing userId (you could return ID from createUser if needed)
+            const newUserId = await createUser(db, name, email, password, dob, gender, phone);
+            await AsyncStorage.setItem('loggedInUserId', newUserId.toString());
+                
+>>>>>>> 6fd33401679a7bf30398d973fbcb8ad69fea7361
             navigation.replace('ProfileMain');
           } catch (e) {
             console.error(e);

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ThemeContext } from '../context/ThemeContext';
 import TabNavigator from './TabNavigator';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import ContactUs from '../screens/contactUs';
@@ -77,6 +78,9 @@ function CustomDrawerContent(props) {
 }
 
 export default function DrawerNavigator() {
+
+    const { isDark } = useContext(ThemeContext);
+
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -89,6 +93,17 @@ export default function DrawerNavigator() {
           fontWeight: 'bold',
           color: '#1b204b'
         },
+        drawerStyle: {
+          width: '45%',
+          backgroundColor: isDark ? '#1a1a1a' : 'lightgrey', // Dark drawer background
+        },
+        drawerActiveTintColor: isDark ? '#fff' : 'blue', // Active item color
+        drawerInactiveTintColor: isDark ? '#ccc' : '#000', // Inactive item color
+        drawerActiveBackgroundColor: isDark ? '#333' : 'skyblue', // Active item background
+        headerStyle: {
+          backgroundColor: isDark ? '#121212' : '#f9f9f9',
+        },
+        headerTintColor: isDark ? '#fff' : '#000',
       }}
     >
       <Drawer.Screen

@@ -19,7 +19,7 @@ export const isValidDOB = (dob: string): boolean => {
 };
 
 export const isValidPassword = (password: string): boolean => {
-  // At least 8 characters
-  const regex = /^.{8,}$/;
+  // At least 8 characters, maximum 50 characters
+  const regex = /^.{8,50}$/;
   return regex.test(password);
 };

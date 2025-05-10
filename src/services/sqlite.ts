@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { SQLiteDatabase, enablePromise, openDatabase } from 'react-native-sqlite-storage';
 
 const databaseName = 'busApp.sqlite';

@@ -1,7 +1,15 @@
 /* eslint-disable prettier/prettier */
 
 import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, ActivityIndicator, Button, PermissionsAndroid, Platform} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Button,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import getCoordinates from '../api/getCoordinates';
@@ -35,58 +43,66 @@ const BookingScreen = () => {
   const [endWeather, setEndWeather] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
 
   const startStopName = 'KSL City Mall Bus Stop, Johor Bahru, Malaysia';
   const endStopName = 'JB Sentral Bus Terminal, Johor Bahru, Malaysia';
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
 
-      const permissionGranted = await requestLocationPermission();
-      if (!permissionGranted) {
-        setError('Location permission denied.');
-        setLoading(false);
-        return;
-      }
+    const permissionGranted = await requestLocationPermission();
+    if (!permissionGranted) {
+      setError('Location permission denied.');
+      setLoading(false);
+      return;
+    }
 
-      Geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            setUserLocation({ latitude, longitude });
+    Geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ latitude, longitude });
 
-            const startCoords = await getCoordinates(startStopName);
-            const endCoords = await getCoordinates(endStopName);
+          const startCoords = await getCoordinates(startStopName);
+          const endCoords = await getCoordinates(endStopName);
 
-            if (!startCoords?.latitude || !endCoords?.latitude) {
-              throw new Error('Invalid bus stop coordinates');
-            }
-
-            setStartStopCoords(startCoords);
-            setEndStopCoords(endCoords);
-
-            const startWeatherDesc = await getWeather(startCoords.latitude, startCoords.longitude);
-            const endWeatherDesc = await getWeather(endCoords.latitude, endCoords.longitude);
-
-            setStartWeather(startWeatherDesc);
-            setEndWeather(endWeatherDesc);
-          } catch (err) {
-            console.error('Data error:', err);
-            setError('Could not fetch map or weather data.');
-          } finally {
-            setLoading(false);
+          if (!startCoords?.latitude || !endCoords?.latitude) {
+            throw new Error('Invalid bus stop coordinates');
           }
-        },
-        (geoError) => {
-          console.error('Geolocation error:', geoError);
-          setError('Could not fetch your location. Check location services.');
-          setLoading(false);
-        },
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-      );
-    };
 
+          setStartStopCoords(startCoords);
+          setEndStopCoords(endCoords);
+
+          const startWeatherDesc = await getWeather(
+            startCoords.latitude,
+            startCoords.longitude
+          );
+          const endWeatherDesc = await getWeather(
+            endCoords.latitude,
+            endCoords.longitude
+          );
+
+          setStartWeather(startWeatherDesc);
+          setEndWeather(endWeatherDesc);
+        } catch (err) {
+          console.error('Data error:', err);
+          setError('Could not fetch map or weather data.');
+        } finally {
+          setLoading(false);
+        }
+      },
+      (geoError) => {
+        console.error('Geolocation error:', geoError);
+        setError('Could not fetch your location. Check location services.');
+        setLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -104,39 +120,60 @@ const BookingScreen = () => {
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
-          <Button title="Try Again" onPress={() => setError(null)} />
+          <Button title="Try Again" onPress={fetchData} />
         </View>
       )}
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: userLocation.latitude,
-          longitude: userLocation.longitude,
-          latitudeDelta: 0.05, // You can adjust this for zoom level
-          longitudeDelta: 0.05, // You can adjust this for zoom level
-        }}
-        zoomEnabled={true}
-        scrollEnabled={true}
-        pitchEnabled={true}
-        rotateEnabled={true}
-        showsUserLocation={true}
-        showsMyLocationButton={true}
-        toolbarEnabled={true}
-      >
-        <Marker coordinate={userLocation} title="Your Location" />
-        <Marker coordinate={startStopCoords} title={`Start: ${startStopName}`} description={`Weather: ${startWeather}`} />
-        <Marker coordinate={endStopCoords} title={`End: ${endStopName}`} description={`Weather: ${endWeather}`} />
-        <Polyline
-          coordinates={[startStopCoords, endStopCoords]}
-          strokeColor="#000"
-          strokeWidth={3}
-        />
-      </MapView>
+
+      {userLocation && startStopCoords && endStopCoords ? (
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          }}
+          onMapReady={() => setMapReady(true)}
+          // showsUserLocation={mapReady}
+          // showsMyLocationButton={mapReady}
+          // zoomEnabled={true}
+          // scrollEnabled={true}
+          // pitchEnabled={true}
+          // rotateEnabled={true}
+          // toolbarEnabled={true}
+        >
+
+          <Marker
+            coordinate={userLocation}
+            title="Your Location"
+          />
+          <Marker
+            coordinate={startStopCoords}
+            title={`Start: ${startStopName}`}
+            description={`Weather: ${startWeather}`}
+          />
+          <Marker
+            coordinate={endStopCoords}
+            title={`End: ${endStopName}`}
+            description={`Weather: ${endWeather}`}
+          />
+          <Polyline
+            coordinates={[startStopCoords, endStopCoords]}
+            strokeColor="#000"
+            strokeWidth={3}
+          />
+        </MapView>
+      ) : (
+        <View style={styles.centered}>
+          <Text>Unable to load map. Check your location or try again.</Text>
+        </View>
+      )}
+
       <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>Start Location: {startStopName}</Text>
-        <Text style={styles.infoText}>Weather: {startWeather}</Text>
-        <Text style={styles.infoText}>End Location: {endStopName}</Text>
-        <Text style={styles.infoText}>Weather: {endWeather}</Text>
+        <Text style={styles.infoText}>Departure Location: {startStopName}</Text>
+        <Text style={styles.infoText}>Departure Weather: {startWeather}</Text>
+        <Text style={styles.infoText}>Destination Location: {endStopName}</Text>
+        <Text style={styles.infoText}>Destination Weather: {endWeather}</Text>
       </View>
     </View>
   );
@@ -169,5 +206,10 @@ const styles = StyleSheet.create({
     color: '#721c24',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

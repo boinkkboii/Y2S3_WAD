@@ -12,7 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { TouchableField, SegmentedButtons, SearchButton } from '../UI';
+import { TouchableField, SegmentedButtons, SearchButton } from '../utils/UI';
 import { getDBConnection, getBusStops, getRoutes } from '../services/sqlite';
 import { formatted } from '../utils/utility';
 import { createBooking } from '../services/sqlite';
@@ -286,7 +286,7 @@ const NewBookingScreen = ({ route }) => {
       <Modal visible={showTimesModal} transparent animationType="slide" onRequestClose={() => setShowTimesModal(false)}>
         <View style={styles.modalBackground}>
           <View style={[styles.modalContainer, { maxHeight: '80%', fontFamily: 'Nunito',}]}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10, fontFamily: 'Nunito', paddingLeft: 10, paddingTop: 10, color: '#706f6f' }}>Select Departure Time</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10, fontFamily: 'Nunito', paddingLeft: 10, paddingTop: 10, color: '#000' }}>Select Departure Time</Text>
             <FlatList
               data={availableTimes}
               keyExtractor={(item) => item.id.toString()}
@@ -297,8 +297,8 @@ const NewBookingScreen = ({ route }) => {
                     {' '}{item.destination}
                   </Text>
                   <Text>Time: {formatTime(item.departure_time)}</Text>
-                  <Text>Duration: {item.duration || 'N/A'}</Text>
-                  <Text style={styles.bookingTime}>Bus - My Bus</Text>
+                  <Text>Duration: {item.duration || 'N/A'} mins</Text>
+                  <Text style={styles.bookingTime}>Bus: My Bus</Text>
                 </TouchableOpacity>
               )}
               keyboardShouldPersistTaps="handled"
@@ -369,11 +369,11 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     paddingBottom: 15,
     paddingTop: 15,
-    color: '#706f6f'
+    color: '#4a4a4a'
   },
   cityText: {
     fontSize: 18,
-    color: '#706f6f'
+    color: '#4a4a4a'
   },
   closeButton: {
     marginTop: 10,

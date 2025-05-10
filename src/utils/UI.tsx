@@ -1,6 +1,15 @@
 // UI.tsx
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput} from 'react-native';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    TextInput,
+    Platform,
+    TouchableNativeFeedback
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 /**
@@ -75,20 +84,31 @@ export const SearchButton: React.FC<{
 );
 
 /**
- * InputField Component
+ * InputWithLabel Component
  */
 export const InputWithLabel: React.FC<{
-    placeholder: string;
+    label?: string;
+    placeholder?: string;
     value: string;
     onChangeText: (text: string) => void;
-    style?: any;
     multiline?: boolean;
     numberOfLines?: number;
     secureTextEntry?: boolean;
-}> = ({ placeholder, value, onChangeText, style, multiline, numberOfLines, secureTextEntry }) => (
+    style?: any;
+}> = ({
+    label,
+    placeholder,
+    value,
+    onChangeText,
+    multiline = false,
+    numberOfLines = 1,
+    secureTextEntry = false,
+    style
+}) => (
     <View style={[styles.inputContainer, style]}>
+        {label && <Text style={styles.label}>{label}</Text>}
         <TextInput
-            style={styles.inputField}
+            style={[styles.inputField, multiline && styles.multiline]}
             placeholder={placeholder}
             value={value}
             onChangeText={onChangeText}
@@ -100,16 +120,63 @@ export const InputWithLabel: React.FC<{
 );
 
 /**
- * SearchButton Component
+ * PickerWithLabel Component
  */
-export const SendButton: React.FC<{
+export const PickerWithLabel: React.FC<{
+    label: string;
+    selectedValue: string;
+    onValueChange: (itemValue: string) => void;
+    items: { label: string; value: string; enabled?: boolean }[]; // Corrected item shape
+}> = ({ label, selectedValue, onValueChange, items }) => (
+    <View style={styles.inputContainer}>
+        <Text style={styles.label}>{label}</Text>
+        <View style={styles.pickerWrapper}>
+            <Picker
+                selectedValue={selectedValue}
+                onValueChange={onValueChange}
+                style={styles.picker}>
+                {items.map((item, index) => (
+                    <Picker.Item
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                        enabled={item.enabled !== false} // optional check for disabling
+                    />
+                ))}
+            </Picker>
+        </View>
+    </View>
+);
+
+/**
+ * AppButton Component
+ */
+export const AppButton: React.FC<{
     title: string;
     onPress: () => void;
-}> = ({ title, onPress}) => (
-    <TouchableOpacity style={styles.SendButton} onPress={onPress}>
-        <Text style={styles.sendText}>{title}</Text>
-    </TouchableOpacity>
-);
+    theme?: 'default' | 'success' | 'warning' | 'danger';
+}> = ({ title, onPress, theme = 'default' }) => {
+    const backgroundColor = {
+        default: '#1b204b',
+        success: '#4caf50',
+        warning: '#ff9800',
+        danger: '#f44336',
+    }[theme];
+
+    const content = (
+        <View style={[styles.appButtonContainer, { backgroundColor }]}>
+            <Text style={styles.sendText}>{title}</Text>
+        </View>
+    );
+
+    return Platform.OS === 'android' ? (
+        <TouchableNativeFeedback onPress={onPress}>
+            {content}
+        </TouchableNativeFeedback>
+    ) : (
+        <TouchableOpacity onPress={onPress}>{content}</TouchableOpacity>
+    );
+};
 
 const styles = StyleSheet.create({
     fieldContainer: {
@@ -122,19 +189,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginVertical: 6,
     },
-    fieldIcon: {
-        color: '#555',
+    icon: {
         marginRight: 10,
+    },
+    label: {
+        fontSize: 16,
+        color: '#929292',
+        fontFamily: 'Nunito',
+        marginLeft: 10,
     },
     fieldText: {
         fontSize: 16,
         color: '#2c2a2a',
         fontFamily: 'Nunito',
         fontWeight: 'bold',
+        marginLeft: 10,
     },
     placeholderText: {
         color: '#929292',
-        fontFamily: 'Nurito',
+        fontFamily: 'Nunito',
         fontWeight: 'normal',
     },
     segmentContainer: {
@@ -156,13 +229,13 @@ const styles = StyleSheet.create({
     segmentText: {
         fontSize: 14,
         color: '#2c2a2a',
-        fontFamily: 'Nurito',
+        fontFamily: 'Nunito',
     },
     segmentTextActive: {
         fontSize: 14,
         color: '#ffffff',
         fontWeight: 'bold',
-        fontFamily: 'Nurito',
+        fontFamily: 'Nunito',
     },
     searchButton: {
         flexDirection: 'row',
@@ -176,7 +249,6 @@ const styles = StyleSheet.create({
     searchIcon: {
         marginRight: 8,
         marginTop: 1,
-        marginBottom: 0,
     },
     searchText: {
         color: '#ffffff',
@@ -184,19 +256,12 @@ const styles = StyleSheet.create({
         fontFamily: 'Nunito',
         fontWeight: 'bold',
     },
-    label: {
-        fontSize: 16,
-        color: '#929292',
-        fontFamily: 'Nurito',
-        marginLeft: 10,
-    },
     inputContainer: {
-        flexDirection: 'row',
-        //alignItems: "center",
+        flexDirection: 'column',
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 8,
-        padding: 1, // Increased padding for better touch area
+        padding: 8,
         backgroundColor: '#fff',
         marginVertical: 10,
     },
@@ -205,26 +270,38 @@ const styles = StyleSheet.create({
         color: '#2c2a2a',
         fontFamily: 'Nunito',
         fontWeight: 'bold',
-        flex: 1, // Allow the input field to take up available space
-        paddingHorizontal: 10, // Add padding to the input field itself
+        paddingHorizontal: 10,
     },
     multiline: {
-        alignItems: "flex-start",
+        textAlignVertical: 'top',
     },
-    SendButton: {
+    appButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1b204b',
         paddingVertical: 14,
         borderRadius: 30,
         marginVertical: 20,
+        marginHorizontal: 10,
     },
     sendText: {
         color: '#ffffff',
         fontSize: 18,
         fontFamily: 'Nunito',
         fontWeight: 'bold',
-    }
-
+    },
+    pickerWrapper: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundColor: '#fff',
+        marginTop: 6,
+    },
+    picker: {
+        height: 50,
+        width: '100%',
+        color: '#2c2a2a',
+        fontFamily: 'Nunito',
+    },
 });

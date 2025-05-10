@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // BookingDetailScreen.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, Modal, TextInput, TouchableOpacity } from 'react-native';

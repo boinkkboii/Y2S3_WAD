@@ -48,11 +48,11 @@ const ProfileScreen = ({ navigation }) => {
         }
     };
 
-  useFocusEffect(
-    useCallback(() => {
-      loadProfile();
-    }, [])
-  );
+    useFocusEffect(
+        useCallback(() => {
+            loadProfile();
+        }, [])
+    );
 
     const pickImage = () => {
         const options = { mediaType: 'photo', includeBase64: false };
@@ -82,19 +82,19 @@ const ProfileScreen = ({ navigation }) => {
         }
 
         if (formData.email && !isValidEmail(formData.email)) {
-          return Alert.alert('Invalid Email', 'Please enter a valid email address.');
+            return Alert.alert('Invalid Email', 'Please enter a valid email address.');
         }
 
         if (formData.phone && !isValidPhoneNumber(formData.phone)) {
-          return Alert.alert('Invalid Phone Number', 'Phone number should be between 10-15 digits.');
+            return Alert.alert('Invalid Phone Number', 'Phone number should be between 10-15 digits.');
         }
 
         if (formData.dob && !isValidDOB(formData.dob)) {
-          return Alert.alert('Invalid Date of Birth', 'Please enter a valid date in YYYY-MM-DD format.');
+            return Alert.alert('Invalid Date of Birth', 'Please enter a valid date in YYYY-MM-DD format.');
         }
 
         if (formData.newPassword && !isValidPassword(formData.newPassword)) {
-          return Alert.alert('Invalid Password', 'Password must be at least 8 characters long.');
+            return Alert.alert('Invalid Password', 'Password must be at least 8 characters long.');
         }
 
         const updatedFields = {
@@ -119,86 +119,92 @@ const ProfileScreen = ({ navigation }) => {
     if (checkingLogin) return <Text>Loading...</Text>;
 
     return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {!user ? (
-        <>
-          <TouchableField label="Login" onPress={() => navigation.navigate('Login')} />
-          <TouchableField label="Register" onPress={() => navigation.navigate('Register')} />
-        </>
-      ) : (
-        <>
-          <View style={styles.profileContainer}>
-            <TouchableOpacity style={styles.editIcon} onPress={() => setEditModalVisible(true)}>
-              <Icon name="edit-2" size={20} color="#333" />
-            </TouchableOpacity>
+        <ScrollView contentContainerStyle={styles.container}>
+            {!user ? (
+                <>
+                    <TouchableField label="Login" onPress={() => navigation.navigate('Login')} />
+                    <TouchableField label="Register" onPress={() => navigation.navigate('Register')} />
+                </>
+            ) : (
+                <>
+                    <View style={styles.profileContainer}>
+                        <TouchableOpacity style={styles.editIcon} onPress={() => setEditModalVisible(true)}>
+                            <Icon name="edit-2" size={20} color="#333" />
+                        </TouchableOpacity>
 
-            <View style={styles.profileRow}>
-              <TouchableOpacity onPress={pickImage}>
-                <Image source={user.profile_image ? { uri: user.profile_image } : defaultImage} style={styles.profileImage} />
-              </TouchableOpacity>
+                        <View style={styles.profileRow}>
+                            <TouchableOpacity onPress={pickImage}>
+                                <Image source={user.profile_image ? { uri: user.profile_image } : defaultImage} style={styles.profileImage} />
+                            </TouchableOpacity>
 
-              <View style={styles.textInfo}>
-                <Text style={styles.heading}>{user.name}</Text>
-                <Text style={styles.infoText}>{user.email}</Text>
-                <Text style={styles.infoText}>{user.gender}</Text>
-              </View>
-            </View>
-          </View>
+                            <View style={styles.textInfo}>
+                                <Text style={styles.heading}>{user.name}</Text>
+                                <Text style={styles.infoText}>{user.email}</Text>
+                                <Text style={styles.infoText}>{user.gender}</Text>
+                            </View>
+                        </View>
+                    </View>
 
-          <View style={styles.optionsContainer}>
-            <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking')}>
-              <View style={styles.flatButtonContent}>
-                <Icon name="calendar" size={20} color="#000" style={styles.leftIcon} />
-                <Text style={styles.flatButtonText}>My Bookings</Text>
-                <Icon name="chevron-right" size={20} color="#888" />
-              </View>
-            </TouchableOpacity>
+                    <View style={styles.optionsContainer}>
+                        <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking')}>
+                            <View style={styles.flatButtonContent}>
+                                <Icon name="calendar" size={20} color="#000" style={styles.leftIcon} />
+                                <Text style={styles.flatButtonText}>My Bookings</Text>
+                                <Icon name="chevron-right" size={20} color="#888" />
+                            </View>
+                        </TouchableOpacity>
 
-            <View style={styles.separator} />
+                        <View style={styles.separator} />
 
-            <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Help')}>
-              <View style={styles.flatButtonContent}>
-                <Icon name="help-circle" size={20} color="#000" style={styles.leftIcon} />
-                <Text style={styles.flatButtonText}>Help & Support</Text>
-                <Icon name="chevron-right" size={20} color="#888" />
-              </View>
-            </TouchableOpacity>
+                        <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Help')}>
+                            <View style={styles.flatButtonContent}>
+                                <Icon name="help-circle" size={20} color="#000" style={styles.leftIcon} />
+                                <Text style={styles.flatButtonText}>Help & Support</Text>
+                                <Icon name="chevron-right" size={20} color="#888" />
+                            </View>
+                        </TouchableOpacity>
 
-            <View style={styles.separator} />
-          </View>
+                        <View style={styles.separator} />
+                    </View>
 
-          <Modal
-            visible={editModalVisible}
-            animationType="slide"
-            transparent={true}
-            onRequestClose={() => setEditModalVisible(false)}
-          >
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContainer}>
-                <Text style={styles.modalTitle}>Edit Profile</Text>
-                <ScrollView>
-                  <TextInput style={styles.input} placeholder="Name" onChangeText={(text) => setFormData({ ...formData, name: text })} />
-                  <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" onChangeText={(text) => setFormData({ ...formData, email: text })} />
-                  <TextInput style={styles.input} placeholder="Phone" keyboardType="phone-pad" onChangeText={(text) => setFormData({ ...formData, phone: text })} />
-                  <TextInput style={styles.input} placeholder="DOB (YYYY-MM-DD)" onChangeText={(text) => setFormData({ ...formData, dob: text })} />
-                  <PickerWithLabel
-                    label="Gender"
-                    selectedValue={formData.gender || user.gender}
-                    onValueChange={(val) => setFormData({ ...formData, gender: val })}
-                    items={[{ key: 'Male', value: 'Male' }, { key: 'Female', value: 'Female' }, { key: 'Other', value: 'Other' }]}
-                  />
-                  <TextInput style={styles.input} placeholder="Old Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, oldPassword: text })} />
-                  <TextInput style={styles.input} placeholder="New Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, newPassword: text })} />
-                  <Button title="Save Changes" onPress={handleEditProfile} />
-                  <Button title="Cancel" color="gray" onPress={() => setEditModalVisible(false)} />
-                </ScrollView>
-              </View>
-            </View>
-          </Modal>
-        </>
-      )}
-    </ScrollView>
-  );
+                    <Modal
+                        visible={editModalVisible}
+                        animationType="slide"
+                        transparent={true}
+                        onRequestClose={() => setEditModalVisible(false)}
+                    >
+                        <View style={styles.modalOverlay}>
+                            <View style={styles.modalContainer}>
+                                <Text style={styles.modalTitle}>Edit Profile</Text>
+                                <ScrollView>
+                                    <TextInput style={styles.input} placeholder="Name" onChangeText={(text) => setFormData({ ...formData, name: text })} />
+                                    <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" onChangeText={(text) => setFormData({ ...formData, email: text })} />
+                                    <TextInput style={styles.input} placeholder="Phone" keyboardType="phone-pad" onChangeText={(text) => setFormData({ ...formData, phone: text })} />
+                                    <TextInput style={styles.input} placeholder="DOB (YYYY-MM-DD)" onChangeText={(text) => setFormData({ ...formData, dob: text })} />
+                                    <PickerWithLabel
+                                        selectedValue={formData.gender ?? ''}
+                                        onValueChange={(val) => setFormData({ ...formData, gender: val })}
+                                        items={[
+                                            { key: 'default', value: 'Select Gender:', label: 'Select Gender', enabled: false },
+                                            { key: 'Male', value: 'Male', label: 'Male' },
+                                            { key: 'Female', value: 'Female', label: 'Female' },
+                                            { key: 'Other', value: 'Other', label: 'Other' },
+                                        ]}
+                                    />
+                                    <TextInput style={styles.input} placeholder="Old Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, oldPassword: text })} />
+                                    <TextInput style={styles.input} placeholder="New Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, newPassword: text })} />
+                                    <View style={styles.button}>
+                                        <Button style={styles.buttonText} title="Cancel" color="gray" onPress={() => setEditModalVisible(false)} />
+                                        <Button color={Platform.OS === 'ios' ? undefined : '#1b204b'} style={styles.buttonText} title="Save Changes" onPress={handleEditProfile} />
+                                    </View>
+                                </ScrollView>
+                            </View>
+                        </View>
+                    </Modal>
+                </>
+            )}
+        </ScrollView>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -306,6 +312,7 @@ const styles = StyleSheet.create({
         padding: 20,
         elevation: 5,
         maxHeight: '90%',
+        fontFamily: 'Nunito'
     },
     modalTitle: {
         fontSize: 20,
@@ -321,6 +328,16 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
         backgroundColor: '#fff',
+    },
+    button: {
+        flexDirection: 'row',
+        paddingLeft: 110,
+        gap: 10,
+        borderRadius: 12,
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
     },
 });
 

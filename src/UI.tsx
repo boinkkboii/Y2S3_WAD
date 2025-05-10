@@ -82,7 +82,6 @@ export const PickerWithLabel = (props: any) => {
 
     return (
         <View style={[inputStyles.container, { flexDirection: orientationDirection }]}>
-            <Text style={inputStyles.label}>{props.label}</Text>
             <Picker
                 style={[inputStyles.input, props.orientation === 'horizontal' && { flex: 3 }]}
                 {...props}

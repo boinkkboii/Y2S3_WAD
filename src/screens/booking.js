@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-// BookingScreen.js
+
 import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';

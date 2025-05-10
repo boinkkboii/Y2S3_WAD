@@ -1,0 +1,18 @@
+[
+  {
+    "question": "How do I book a ticket?",
+    "answer": "To book a ticket, select your route, choose a bus and seat, then proceed to payment."
+  },
+  {
+    "question": "Can I cancel or reschedule my booking?",
+    "answer": "Yes, you can cancel or reschedule from the \"My Bookings\" section before the trip starts. Cancellation charges may apply."
+  },
+  {
+    "question": "What if the bus is delayed?",
+    "answer": "You will be notified via SMS or app notification. We recommend arriving at the boarding point 15 minutes early."
+  },
+  {
+    "question": "How do I contact customer support?",
+    "answer": "You can reach us 24/7 through the Help Center in the app or call our toll-free number: 1800-123-4567."
+  }
+]

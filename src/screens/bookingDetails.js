@@ -1,8 +1,12 @@
 // BookingDetailScreen.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingDetailsById, updateBooking, deleteBooking } from '../services/sqlite';
+import MapView, { Marker, Polyline } from 'react-native-maps';
+import getCoordinates from '../api/getCoordinates'; // Adjust if needed
+import getWeather from '../api/getWeather';
 
 const BookingDetailScreen = ({ route, navigation }) => {
   const { bookingId } = route.params;
@@ -11,6 +15,9 @@ const BookingDetailScreen = ({ route, navigation }) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [updatedPassengers, setUpdatedPassengers] = useState('');
+  const [coordinates, setCoordinates] = useState(null);
+  const mapRef = useRef(null);
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
       const loadDetails = async () => {
@@ -26,6 +33,29 @@ const BookingDetailScreen = ({ route, navigation }) => {
   
           if (bookingDetails?.user_id === id) {
             setBookingDetails(bookingDetails);
+          
+          // Fetch coordinates
+          if (bookingDetails.departure && bookingDetails.destination) {
+              const fromCoords = await getCoordinates(bookingDetails.departure);
+              const toCoords = await getCoordinates(bookingDetails.destination);
+              setCoordinates({ from: fromCoords, to: toCoords });
+
+              // Fetch weather at the destination
+              if (toCoords?.latitude && toCoords?.longitude) {
+                const weatherStatus = await getWeather(toCoords.latitude, toCoords.longitude);
+                setWeather(weatherStatus);
+              }
+
+              // Fit both markers on screen
+              setTimeout(() => {
+                if (mapRef.current && fromCoords && toCoords) {
+                  mapRef.current.fitToCoordinates(
+                    [fromCoords, toCoords],
+                    { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: true }
+                  );
+                }
+              }, 500);
+            }
           } else {
             console.warn('Booking does not belong to this user.');
           }
@@ -80,9 +110,34 @@ const BookingDetailScreen = ({ route, navigation }) => {
   };
 
  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Booking Details</Text>
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafe' }}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+      {coordinates && (
+        <View style={{ height: 250, marginBottom: 16, borderRadius: 10, overflow: 'hidden' }}>
+          <MapView
+            ref={mapRef}
+            style={{ flex: 1 }}
+            scrollEnabled={false}
+            zoomEnabled={false}
+            rotateEnabled={false}
+            pitchEnabled={false}
+            initialRegion={{
+              latitude: coordinates.from.latitude,
+              longitude: coordinates.from.longitude,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }}
+          >
+            <Marker coordinate={coordinates.from} title="From" />
+            <Marker coordinate={coordinates.to} title="To" />
+            <Polyline
+              coordinates={[coordinates.from, coordinates.to]}
+              strokeColor="#3a86ff"
+              strokeWidth={3}
+            />
+          </MapView>
+        </View>
+      )}
       <View style={styles.card}>
         <Text style={styles.label}>Booking ID: <Text style={styles.value}>{booking.booking_id}</Text></Text>
         <Text style={styles.label}>From: <Text style={styles.value}>{booking.departure}</Text></Text>
@@ -92,6 +147,13 @@ const BookingDetailScreen = ({ route, navigation }) => {
         <Text style={styles.label}>Price: <Text style={styles.value}>RM {booking.price}</Text></Text>
         <Text style={styles.label}>Passengers: <Text style={styles.value}>{booking.no_of_passenger}</Text></Text>
       </View>
+      
+      {weather && (
+        <View style={styles.weatherCard}>
+          <Text style={styles.label}>Weather at Destination:</Text>
+          <Text style={styles.weatherValue}>{weather}</Text>
+        </View>
+      )}
 
       <TouchableOpacity style={styles.button} onPress={() => setShowPaymentModal(true)}>
         <Text style={styles.buttonText}>Pay Now</Text>
@@ -149,6 +211,7 @@ const BookingDetailScreen = ({ route, navigation }) => {
         </View>
       </Modal>
     </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -231,5 +294,28 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 8,
     marginBottom: 10,
+  },
+  mapContainer: {
+    height: 200,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+  weatherCard: {
+    backgroundColor: '#e0f7fa',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+  },
+  weatherValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0077b6',
+    marginTop: 6,
   },
 });

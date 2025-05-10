@@ -11,6 +11,7 @@ const getCoordinates = async placeName => {
         params: {
           address: placeName,
           key: GOOGLE_MAPS_API_KEY,
+          components: 'country:MY', //Restricted to Malaysia
         },
       },
     );

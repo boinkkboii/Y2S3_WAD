@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ThemeContext } from '../context/ThemeContext';
@@ -94,7 +94,7 @@ export default function DrawerNavigator() {
           color: '#1b204b'
         },
         drawerStyle: {
-          width: '45%',
+          width: '65%',
           backgroundColor: isDark ? '#1a1a1a' : 'lightgrey', // Dark drawer background
         },
         drawerActiveTintColor: isDark ? '#fff' : 'blue', // Active item color

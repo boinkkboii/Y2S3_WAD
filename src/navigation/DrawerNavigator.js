@@ -25,7 +25,7 @@ const AboutUsIcon = () => <MaterialCommunityIcons name="information" size={24} c
 
 function CustomDrawerContent(props) {
   const [user, setUser] = useState(null);
-
+  const [CheckingLogin, setCheckingLogin] = useState(null);
   const loadProfile = async () => {
     try {
       const userId = await AsyncStorage.getItem('loggedInUserId');

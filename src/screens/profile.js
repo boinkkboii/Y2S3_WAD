@@ -146,7 +146,7 @@ const ProfileScreen = ({ navigation }) => {
           </View>
 
           <View style={styles.optionsContainer}>
-            <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking')}>
+            <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking', {screen: 'BookingHome'})}>
               <View style={styles.flatButtonContent}>
                 <Icon name="calendar" size={20} color="#000" style={styles.leftIcon} />
                 <Text style={styles.flatButtonText}>My Bookings</Text>
@@ -185,7 +185,7 @@ const ProfileScreen = ({ navigation }) => {
                     label="Gender"
                     selectedValue={formData.gender || user.gender}
                     onValueChange={(val) => setFormData({ ...formData, gender: val })}
-                    items={[{ key: 'Male', value: 'Male' }, { key: 'Female', value: 'Female' }, { key: 'Other', value: 'Other' }]}
+                    items={[{ key: 'Male', value: 'Male' }, { key: 'Female', value: 'Female' }, { key: 'nub', value: 'Others' }]}
                   />
                   <TextInput style={styles.input} placeholder="Old Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, oldPassword: text })} />
                   <TextInput style={styles.input} placeholder="New Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, newPassword: text })} />

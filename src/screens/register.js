@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { getDBConnection, createUser, getUsers } from '../services/sqlite';
-import { PickerWithLabel } from '../UI';
+import { PickerWithLabel } from '../utils/UI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { isValidEmail, isValidPhoneNumber, isValidDOB, isValidPassword } from '../utils/validation';

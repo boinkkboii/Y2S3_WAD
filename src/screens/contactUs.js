@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert, TouchableOpacity, Modal, Animated, Easing } from 'react-native';
-import { InputWithLabel, SendButton } from './UI';
 import { Linking } from 'react-native';
 import { isValidEmail } from '../utils/validation';
+import { InputWithLabel, AppButton } from '../utils/UI';
 
 const ContactUs = () => {
   const [name, setName] = useState('');
@@ -92,7 +92,7 @@ const ContactUs = () => {
         onChangeText={setMessage}
       />
 
-      <SendButton title="Send Message" onPress={handleSubmit} />
+      <AppButton title="Send Message" onPress={handleSubmit} />
 
       {/* Contact Info Section */}
       <Text style={styles.contactInfoHeading}>Or contact us directly:</Text>

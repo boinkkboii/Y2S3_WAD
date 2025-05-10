@@ -12,7 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { TouchableField, SegmentedButtons, SearchButton } from '../UI';
+import { TouchableField, SegmentedButtons, SearchButton } from '../utils/UI';
 import { getDBConnection, getBusStops, getRoutes } from '../services/sqlite';
 import { formatted } from '../utils/utility';
 import { createBooking } from '../services/sqlite';

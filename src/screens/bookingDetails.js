@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-// BookingDetailScreen.js
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -176,7 +175,7 @@ const BookingDetailScreen = ({ route, navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Choose Payment Method</Text>
-            {['UPI', 'Credit/Debit Card', 'Cash on Boarding'].map((option) => (
+            {['Boost', 'Credit/Debit Card', 'Touch n Go Ewallet'].map((option) => (
               <TouchableOpacity key={option} style={styles.modalButton} onPress={() => {
                 Alert.alert('Payment selected', `You chose: ${option}`);
                 setShowPaymentModal(false);

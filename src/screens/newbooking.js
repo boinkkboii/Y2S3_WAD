@@ -14,7 +14,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TouchableField, SegmentedButtons, SearchButton } from '../UI';
 import { getDBConnection, getBusStops, getRoutes } from '../services/sqlite';
-import { formatted } from '../utility';
+import { formatted } from '../utils/utility';
 import { createBooking } from '../services/sqlite';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';

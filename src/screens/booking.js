@@ -1,12 +1,11 @@
 /* eslint-disable prettier/prettier */
-
 import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingsForUser } from '../services/sqlite';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { formatTime } from '../utils/utility';
 const BookingScreen = () => {
   const [userId, setUserId] = useState(null);
   const [bookings, setBookings] = useState([]);
@@ -20,7 +19,7 @@ const BookingScreen = () => {
           Alert.alert('Error', 'Please log in to view your bookings.');
           return;
         }
-        setUserId(storedUserId); // Store the logged-in user ID
+        setUserId(storedUserId);
         try {
           const db = await getDBConnection();
           const result = await getBookingsForUser(db, storedUserId);
@@ -43,18 +42,6 @@ const BookingScreen = () => {
           data={bookings}
           keyExtractor={(item) => item.booking_id.toString()}
           renderItem={({ item }) => {
-            const formatTime = (timeInt) => {
-              if (typeof timeInt !== 'number') return 'Invalid time';
-            
-              const hours = Math.floor(timeInt / 100);
-              const minutes = timeInt % 100;
-            
-              const paddedHours = String(hours).padStart(2, '0');
-              const paddedMinutes = String(minutes).padStart(2, '0');
-            
-              return `${paddedHours}:${paddedMinutes}`;
-            };
-          
             return (
               <TouchableOpacity
                 onPress={() =>

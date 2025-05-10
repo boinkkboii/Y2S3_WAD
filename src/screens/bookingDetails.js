@@ -109,6 +109,13 @@ const BookingDetailScreen = ({ route, navigation }) => {
     ]);
   };
 
+  const formatTime = (timeInt) => {
+    const timeStr = timeInt.toString().padStart(4, '0'); // e.g., "800" => "0800"
+    const hours = timeStr.slice(0, 2);
+    const minutes = timeStr.slice(2);
+    return `${hours}:${minutes}`;
+  };
+
  return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafe' }}>
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
@@ -143,7 +150,7 @@ const BookingDetailScreen = ({ route, navigation }) => {
         <Text style={styles.label}>From: <Text style={styles.value}>{booking.departure}</Text></Text>
         <Text style={styles.label}>To: <Text style={styles.value}>{booking.destination}</Text></Text>
         <Text style={styles.label}>Date: <Text style={styles.value}>{booking.date}</Text></Text>
-        <Text style={styles.label}>Time: <Text style={styles.value}>{booking.time}</Text></Text>
+        <Text style={styles.label}>Time: <Text style={styles.value}>{formatTime(booking.time)}</Text></Text>
         <Text style={styles.label}>Price: <Text style={styles.value}>RM {booking.price}</Text></Text>
         <Text style={styles.label}>Passengers: <Text style={styles.value}>{booking.no_of_passenger}</Text></Text>
       </View>
@@ -222,12 +229,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f9fafe',
+    fontFamily: 'Nunito'
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 16,
     textAlign: 'center',
+    fontFamily: 'Nunito'
   },
   card: {
     backgroundColor: '#ffffff',
@@ -240,9 +249,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 6,
     fontWeight: 'bold',
+    color: '#000',
+    fontFamily: 'Nunito'
   },
   value: {
     fontWeight: 'normal',
+    fontFamily: 'Nunito'
   },
   button: {
     backgroundColor: '#3a86ff',

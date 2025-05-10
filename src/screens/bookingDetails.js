@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingDetailsById, updateBooking, deleteBooking } from '../services/sqlite';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import getCoordinates from '../api/getCoordinates'; // Adjust if needed
+import getCoordinates from '../api/getCoordinates';
 import getWeather from '../api/getWeather';
 
 const BookingDetailScreen = ({ route, navigation }) => {

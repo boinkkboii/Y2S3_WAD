@@ -146,7 +146,7 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.optionsContainer}>
-                        <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking')}>
+                        <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking', {screen: 'BookingHome'})}>
                             <View style={styles.flatButtonContent}>
                                 <Icon name="calendar" size={20} color="#000" style={styles.leftIcon} />
                                 <Text style={styles.flatButtonText}>My Bookings</Text>

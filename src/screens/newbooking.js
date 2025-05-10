@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TouchableField, SegmentedButtons, SearchButton } from '../UI';
@@ -16,13 +17,13 @@ import { getDBConnection, getBusStops, getRoutes } from '../services/sqlite';
 import { formatted } from '../utility';
 import { createBooking } from '../services/sqlite';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const NewBookingScreen = ({ route }) => {
   const { departure, destination } = route.params || {};
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
-  const [date, setDate] = useState(new Date()); // keep this as-is
+  const [date, setDate] = useState(new Date());
   const [dateOption, setDateOption] = useState('Today');
   const [returnDate, setReturnDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -35,41 +36,42 @@ const NewBookingScreen = ({ route }) => {
   const [showTimesModal, setShowTimesModal] = useState(false);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [noOfPassengers, setNoOfPassengers] = useState('1');
-  const [userId, setUserId] = useState(null);  // State for userId
+  const [userId, setUserId] = useState(null);
   
 
-  useEffect(() => {
-    const fetchStopsAndRoutes = async () => {
-      try {
-        const db = await getDBConnection();
+  useFocusEffect(
+    useCallback(() => {
+      const fetchStopsAndRoutes = async () => {
+        try {
+          const db = await getDBConnection();
 
-        // Fetch and set bus stops
-        const stopsData = await getBusStops(db);
-        const stopNames = stopsData
-          .map((stop) => stop.name)
-          .filter((name) => typeof name === 'string' && name.trim() !== '');
-        const uniqueStops = Array.from(new Set(stopNames)).sort();
-        setStops(uniqueStops);
+          // Fetch and set bus stops
+          const stopsData = await getBusStops(db);
+          const stopNames = stopsData
+            .map((stop) => stop.name)
+            .filter((name) => typeof name === 'string' && name.trim() !== '');
+          const uniqueStops = Array.from(new Set(stopNames)).sort();
+          setStops(uniqueStops);
 
-        // Fetch and set route data
-        const routes = await getRoutes(db);
-        setRoutesData(routes);
+          // Fetch and set route data
+          const routes = await getRoutes(db);
+          setRoutesData(routes);
 
-        //Fetch and set user 
-        const storedUserId = await AsyncStorage.getItem('loggedInUserId');
-        setUserId(storedUserId);
+          // Fetch and set user
+          const storedUserId = await AsyncStorage.getItem('loggedInUserId');
+          setUserId(storedUserId);
 
-        //Set departure and destination if passed from home
-        if (departure) setFrom(departure);
-        if (destination) setTo(destination);
-      } catch (error) {
-        console.error('Error loading routes or user:', error);
-      }
-    };
+          // Set departure and destination if passed from home
+          if (departure) setFrom(departure);
+          if (destination) setTo(destination);
+        } catch (error) {
+          console.error('Error loading routes or user:', error);
+        }
+      };
 
-    fetchStopsAndRoutes();
-    console.log(userId)
-  }, []);
+      fetchStopsAndRoutes();
+    }, [departure, destination])
+  );
 
   const onSelectDateOption = (opt) => {
     setDateOption(opt);

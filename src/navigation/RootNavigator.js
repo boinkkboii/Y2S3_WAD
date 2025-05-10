@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import DrawerNavigator from './DrawerNavigator';
 import TabNavigator from './TabNavigator';
+import BookingDetailScreen from '../screens/bookingDetails';
 
 const Stack = createStackNavigator();
 

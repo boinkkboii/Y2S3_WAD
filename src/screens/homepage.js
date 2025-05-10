@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // /* eslint-disable prettier/prettier */
 // import React, { useEffect, useState } from 'react';
 // import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';

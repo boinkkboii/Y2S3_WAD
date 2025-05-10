@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { TouchableField, SegmentedButtons, SearchButton } from './UI';
-import { formatted } from './utility';
+import { TouchableField, SegmentedButtons, SearchButton } from '../UI';
+import { formatted } from '../utility';
 import { Platform } from 'react-native';
 
-const AddBookingScreen: React.FC = () => {
+const AddBookingScreen = () => {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [date, setDate] = useState(new Date());
-  const [returnDate, setReturnDate] = useState<Date | null>(null);
+  const [returnDate, setReturnDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showReturnPicker, setShowReturnPicker] = useState(false);
   const [dateOption, setDateOption] = useState('Today');
 
-  const onSelectDateOption = (opt: string) => {
+  const onSelectDateOption = (opt) => {
     setDateOption(opt);
     // Adjust the date based on selection
     if (opt === 'Today') setDate(new Date());
@@ -46,7 +46,7 @@ const AddBookingScreen: React.FC = () => {
         <TouchableField
           icon="calendar"
           label="Date of departure              "
-          placeholder='Select date'
+          placeholder="Select date"
           value={formatted(date)}
           onPress={() => setShowDatePicker(true)}
         />
@@ -69,7 +69,7 @@ const AddBookingScreen: React.FC = () => {
         <TouchableField
           icon="calendar"
           placeholder="Date of return (optional)"
-          label=''
+          label=""
           value={returnDate ? formatted(returnDate) : ''}
           onPress={() => setShowReturnPicker(true)}
         />

@@ -7,9 +7,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 // import MenuScreen from '../screens/menu';
 import HomeScreen from '../screens/homepage';
-import BookingScreen from '../screens/booking';
+import BookingStack from '../navigation/BookingStack';
 import HelpScreen from '../screens/help';
-import MyAccountScreen from '../screens/myaccount';
+import ProfileStack from '../navigation/ProfileStack';
 import NewBookingScreen from '../screens/newbooking';
 
 export default function TabNavigator() {
@@ -46,7 +46,7 @@ export default function TabNavigator() {
             iconName = 'ticket-confirmation';
           } else if (routeName === 'Help') {
             iconName = 'help-circle';
-          } else if (routeName === 'MyAccount') {
+          } else if (routeName === 'Profile') {
             iconName = 'account';
           }
 
@@ -65,10 +65,10 @@ export default function TabNavigator() {
         }}
       >
         <CurvedBottomBar.Screen name="Home" position="LEFT" component={HomeScreen} />
-        <CurvedBottomBar.Screen name="Booking" position="LEFT" component={BookingScreen} />
+        <CurvedBottomBar.Screen name="Booking" position="LEFT" component={BookingStack} />
         <CurvedBottomBar.Screen name="NewBooking" position="CENTER" component={NewBookingScreen} />
         <CurvedBottomBar.Screen name="Help" position="RIGHT" component={HelpScreen} />
-        <CurvedBottomBar.Screen name="MyAccount" position="RIGHT" component={MyAccountScreen} />
+        <CurvedBottomBar.Screen name="Profile" position="RIGHT" component={ProfileStack} />
       </CurvedBottomBar.Navigator>
     </View>
   );

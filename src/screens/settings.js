@@ -114,7 +114,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 3,
   },
-  switchLabel: { fontSize: 18, fontFamily: 'Nunito' },
+  switchLabel: { 
+    fontSize: 18, 
+    fontFamily: 'Nunito' 
+  },
   buttonsContainer: {
     width: '100%',
     marginTop: 10,

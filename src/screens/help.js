@@ -7,7 +7,6 @@ import {
   ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import ContactUsScreen from './contactUs';
 
 const faqData = [
   {

@@ -118,7 +118,7 @@ const ContactUs = () => {
                   {
                     translateY: modalAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [300, 0], // Starts from bottom (300) and moves to the center (0)
+                      outputRange: [300, 0],
                     }),
                   },
                 ],
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
-    textAlignVertical: 'top', // To ensure text starts at the top of the InputWithLabel
+    textAlignVertical: 'top',
   },
   contactInfoHeading: {
     fontSize: 18,
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end', // Align modal to the bottom
+    justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },

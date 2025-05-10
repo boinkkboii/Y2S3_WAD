@@ -1,5 +1,5 @@
 // ProfileScreen.js
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -10,14 +10,14 @@ import {
   Alert,
   Modal,
   TextInput,
-  Button,
-  Platform
+  Button
 } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getUserById, updateUser, updateUserProfileImage } from '../services/sqlite';
 import { TouchableField, PickerWithLabel } from '../UI';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { useFocusEffect } from "@react-navigation/native";
 
 const ProfileScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
@@ -46,14 +46,11 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('loggedInUserId');
-    setUser(null);
-  };
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+    }, [])
+  );
 
   const pickImage = () => {
     const options = { mediaType: 'photo', includeBase64: false };
@@ -133,18 +130,6 @@ const ProfileScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <View style={styles.optionsContainer}>
-            <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking')}>
-              <Text style={styles.flatButtonText}>My Bookings</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Help')}>
-              <Text style={styles.flatButtonText}>Help & Support</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.flatButton} onPress={handleLogout}>
-              <Text style={styles.logoutButtonText}>Log Out</Text>
-            </TouchableOpacity>
-          </View>
-
           {/* Edit Profile Modal */}
           <Modal
             visible={editModalVisible}
@@ -181,98 +166,85 @@ const ProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-        paddingTop: 50,
-        backgroundColor: '#f9f9f9',
-        flexGrow: 1,
-    },
-    profileContainer: {
-        marginBottom: 30,
-        backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 10,
-        elevation: 3,
-    },
-    profileRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    textInfo: {
-        flex: 1,
-        paddingRight: 10,
-    },
-    heading: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    infoText: {
-        fontSize: 16,
-        marginBottom: 5,
-    },
-    profileImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-    },
-    optionsContainer: {
-        marginBottom: 30,
-    },
-    flatButton: {
-        backgroundColor: '#ffffff',
-        padding: 15,
-        marginBottom: 10,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ccc',
-    },
-    flatButtonText: {
-        color: '#333',
-        fontSize: 16,
-        textAlign: 'center',
-    },
-    logoutButtonText: {
-        color: '#ff0000',
-        fontSize: 16,
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-    editIcon: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        padding: 5,
-        zIndex: 1,
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        padding: 20,
-    },
-    modalContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 20,
-        elevation: 5,
-        maxHeight: '90%',
-    },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        textAlign: 'center'
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 10,
-        backgroundColor: '#fff',
-    },
+  container: {
+    padding: 20,
+    paddingTop: 50,
+    backgroundColor: '#f9f9f9',
+    flexGrow: 1,
+  },
+  profileContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  profileRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textInfo: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  heading: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
+  infoText: {
+    fontSize: 16,
+    marginBottom: 4,
+    color: '#555',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#ddd',
+    backgroundColor: '#eee',
+  },
+  editIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 5,
+    zIndex: 1,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    elevation: 5,
+    maxHeight: '90%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#222',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+  },
 });
 
 export default ProfileScreen;

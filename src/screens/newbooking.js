@@ -18,6 +18,7 @@ import { formatted } from '../utility';
 import { createBooking } from '../services/sqlite';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const NewBookingScreen = ({ route }) => {
   const { departure, destination } = route.params || {};
@@ -147,7 +148,7 @@ const NewBookingScreen = ({ route }) => {
       return;
     }
 
-    const passengerCount = parseInt(noOfPassengers);
+  const passengerCount = parseInt(noOfPassengers);
     if (isNaN(passengerCount) || passengerCount < 1) {
       Alert.alert('Invalid passenger count', 'Please enter a valid number.');
       return;
@@ -179,13 +180,20 @@ const NewBookingScreen = ({ route }) => {
     );
   };
 
+  const formatTime = (timeInt) => {
+    const timeStr = timeInt.toString().padStart(4, '0'); // e.g., "800" => "0800"
+    const hours = timeStr.slice(0, 2);
+    const minutes = timeStr.slice(2);
+    return `${hours}:${minutes}`;
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Bus Tickets</Text>
       <View style={styles.card}>
         <TouchableField
           icon="bus"
-          label="From"
+          placeholder="From"
           value={from}
           onPress={() => {
             setSelectedField('from');
@@ -195,7 +203,7 @@ const NewBookingScreen = ({ route }) => {
         />
         <TouchableField
           icon="bus"
-          label="To"
+          placeholder="To"
           value={to}
           onPress={() => {
             setSelectedField('to');
@@ -205,8 +213,7 @@ const NewBookingScreen = ({ route }) => {
         />
         <TouchableField
           icon="calendar"
-          label="Date of departure"
-          placeholder="Select date"
+          placeholder="Date of departure"
           value={formatted(date)}
           onPress={() => setShowDatePicker(true)}
         />
@@ -277,24 +284,26 @@ const NewBookingScreen = ({ route }) => {
 
       <Modal visible={showTimesModal} transparent animationType="slide" onRequestClose={() => setShowTimesModal(false)}>
         <View style={styles.modalBackground}>
-          <View style={[styles.modalContainer, { maxHeight: '80%' }]}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Select Departure Time</Text>
+          <View style={[styles.modalContainer, { maxHeight: '80%', fontFamily: 'Nunito',}]}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10, fontFamily: 'Nunito', paddingLeft: 10, paddingTop: 10, color: '#706f6f' }}>Select Departure Time</Text>
             <FlatList
               data={availableTimes}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.cityItem} onPress={() => handleCreateBooking(item.id)}>
                   <Text style={styles.cityText}>
-                    {item.departure} → {item.destination}
+                    {item.departure}{' '}<Icon name="arrow-forward" size={16} color="#8c8c8c" fontWeight='bold' />
+                    {' '}{item.destination}
                   </Text>
-                  <Text>Time: {item.departure_time}</Text>
+                  <Text>Time: {formatTime(item.departure_time)}</Text>
                   <Text>Duration: {item.duration || 'N/A'}</Text>
+                  <Text style={styles.bookingTime}>Bus - My Bus</Text>
                 </TouchableOpacity>
               )}
               keyboardShouldPersistTaps="handled"
             />
 
-            <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>No. of Passengers</Text>
+            <Text style={{ fontWeight: 'bold', paddingBottom: 5, paddingTop: 20, padding: 10, color:"#003", fontSize: 16, fontFamily: 'Nunito' }}>No. of Passengers:</Text>
             <TextInput
               value={noOfPassengers}
               onChangeText={setNoOfPassengers}
@@ -346,35 +355,49 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: 'white',
-    padding: 20,
+    padding: 5,
     borderRadius: 8,
     width: '80%',
     maxHeight: '80%',
+    fontFamily: 'Nunito',
+    marginBottom: 20
   },
   cityItem: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    paddingBottom: 15,
+    paddingTop: 15,
+    color: '#706f6f'
   },
   cityText: {
     fontSize: 18,
+    color: '#706f6f'
   },
   closeButton: {
     marginTop: 10,
     padding: 10,
-    backgroundColor: '#007bff',
+    backgroundColor: '#1b204b',
     borderRadius: 5,
   },
   closeText: {
-    color: 'white',
+    color: '#fff',
     textAlign: 'center',
+    fontSize: 15,
+    fontWeight: 'bold'
   },
   searchInput: {
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 8,
+    borderRadius: 8,
+    padding: 10,
     marginBottom: 10,
     borderRadius: 6,
+    fontFamily: 'Nunito',
+    fontSize: 16,
+    color: '#918e8e',
+    paddingLeft: 10,
+    marginHorizontal: 10,
   },
   flatListWrapper: {
     maxHeight: 300,

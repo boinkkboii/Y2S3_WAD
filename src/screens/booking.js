@@ -5,6 +5,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingsForUser } from '../services/sqlite';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const BookingScreen = () => {
   const [userId, setUserId] = useState(null);
@@ -34,26 +35,44 @@ const BookingScreen = () => {
     }, [])
   );
 
+
   return (
     <View style={styles.container}>
       {bookings.length > 0 ? (
-        <FlatList
+        <FlatList 
           data={bookings}
           keyExtractor={(item) => item.booking_id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('BookingDetail', {
-                  bookingId: item.booking_id,
-                  userId: userId,
-                })
-              }
-              style={styles.bookingItem}
-            >
-              <Text style={styles.bookingText}>{item.departure} → {item.destination}</Text>
-              <Text>{item.date} at {item.time}</Text>
-            </TouchableOpacity>
-          )}
+          renderItem={({ item }) => {
+            const formatTime = (timeInt) => {
+              if (typeof timeInt !== 'number') return 'Invalid time';
+            
+              const hours = Math.floor(timeInt / 100);
+              const minutes = timeInt % 100;
+            
+              const paddedHours = String(hours).padStart(2, '0');
+              const paddedMinutes = String(minutes).padStart(2, '0');
+            
+              return `${paddedHours}:${paddedMinutes}`;
+            };
+          
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('BookingDetail', {
+                    bookingId: item.booking_id,
+                    userId: userId,
+                  })
+                }
+                style={styles.bookingItem}
+              >
+                <Text style={styles.bookingText}>{item.departure}{' '}<Icon name="arrow-forward" size={16} color="#8c8c8c" fontWeight='bold' />
+                {' '}{item.destination}</Text>
+                <Text style={styles.bookingTime}>{item.date}, {formatTime(item.time)}</Text>
+                <Text style={styles.bookingTime}>Bus - My Bus</Text>
+              </TouchableOpacity>
+            );
+          }}
+          
         />
       ) : (
         <Text>No bookings found.</Text>
@@ -65,7 +84,7 @@ const BookingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingTop: 5,
     backgroundColor: '#f4f4f4',
   },
   bookingItem: {
@@ -79,9 +98,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   bookingText: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: 'bold',
+    fontFamily: 'Nunito',
+    color: '#000'
   },
+  bookingTime: {
+    fontFamily: 'Nunito',
+    color: '#000',
+    fontSize: 14,
+  }
 });
 
 export default BookingScreen;

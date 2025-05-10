@@ -1,344 +1,163 @@
-// ProfileScreen.js
-import React, { useCallback, useState } from "react";
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    ScrollView,
-    Image,
-    Alert,
-    Modal,
-    TextInput,
-    Button,
-    Platform
-} from "react-native";
-import Icon from 'react-native-vector-icons/Feather';
+/* eslint-disable prettier/prettier */
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import { getDBConnection, createUser, getUsers } from '../services/sqlite';  // Assume these functions are defined as earlier
+import { PickerWithLabel } from '../UI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getDBConnection, getUserById, updateUser, updateUserProfileImage } from '../services/sqlite';
-import { TouchableField, PickerWithLabel } from '../UI';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { useFocusEffect } from "@react-navigation/native";
-import { isValidEmail, isValidPhoneNumber, isValidDOB, isValidPassword } from '../utils/validation';
+import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 
-const ProfileScreen = ({ navigation }) => {
-    const [user, setUser] = useState(null);
-    const [checkingLogin, setCheckingLogin] = useState(true);
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [formData, setFormData] = useState({});
-    const defaultImage = require('../img/profile.png');
 
-    const loadProfile = async () => {
+const RegisterScreen = () => {
+    const navigation = useNavigation();
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [dob, setDob] = useState('');
+    const [gender, setGender] = useState('');
+    const [phone, setPhone] = useState('');
+    const { colors } = useTheme();
+
+
+    // Handle the registration form submission
+    const handleRegister = async () => {
+        if (!name || !email || !password || !confirmPassword) {
+          Alert.alert('Please fill all fields');
+          return;
+        }
+      
+        if (password !== confirmPassword) {
+          Alert.alert('Passwords do not match');
+          return;
+        }
+      
         try {
-            const userId = await AsyncStorage.getItem('loggedInUserId');
-            if (userId) {
-                const db = await getDBConnection();
-                const userProfile = await getUserById(db, userId);
-                if (userProfile) {
-                    setUser(userProfile);
-                } else {
-                    await AsyncStorage.removeItem('loggedInUserId');
-                }
+            const db = await getDBConnection();
+      
+            // Optional: Check if email already exists
+            const users = await getUsers(db);
+            const emailExists = users.some(user => user.email === email);
+            if (emailExists) {
+              Alert.alert('Error', 'Email already registered');
+              return;
             }
-        } catch (error) {
-            console.error("Error loading profile:", error.message);
-            Alert.alert("Error", "Failed to load profile.");
-        } finally {
-            setCheckingLogin(false);
-        }
-    };
-
-    useFocusEffect(
-        useCallback(() => {
-            loadProfile();
-        }, [])
-    );
-
-    const pickImage = () => {
-        const options = { mediaType: 'photo', includeBase64: false };
-
-        launchImageLibrary(options, async (response) => {
-            if (response.didCancel) return;
-            if (response.errorCode) return Alert.alert('Error', response.errorMessage);
-
-            const uri = response.assets[0].uri;
-
-            try {
-                const db = await getDBConnection();
-                await updateUserProfileImage(db, uri);
-                setUser((prev) => ({ ...prev, profile_image: uri }));
-            } catch (err) {
-                Alert.alert("Error", "Failed to update profile image.");
-            }
-        });
-    };
-
-    const handleEditProfile = async () => {
-        if (!user) return;
-        const db = await getDBConnection();
-
-        if (formData.newPassword && formData.oldPassword !== user.password) {
-            return Alert.alert('Error', 'Old password is incorrect.');
-        }
-
-        if (formData.email && !isValidEmail(formData.email)) {
-            return Alert.alert('Invalid Email', 'Please enter a valid email address.');
-        }
-
-        if (formData.phone && !isValidPhoneNumber(formData.phone)) {
-            return Alert.alert('Invalid Phone Number', 'Phone number should be between 10-15 digits.');
-        }
-
-        if (formData.dob && !isValidDOB(formData.dob)) {
-            return Alert.alert('Invalid Date of Birth', 'Please enter a valid date in YYYY-MM-DD format.');
-        }
-
-        if (formData.newPassword && !isValidPassword(formData.newPassword)) {
-            return Alert.alert('Invalid Password', 'Password must be at least 8 characters long.');
-        }
-
-        const updatedFields = {
-            name: formData.name || user.name,
-            email: formData.email || user.email,
-            password: formData.newPassword || user.password,
-            dob: formData.dob || user.dob,
-            gender: formData.gender || user.gender,
-            phone: formData.phone || user.phone,
-        };
-
-        try {
-            await updateUser(db, user.id.toString(), ...Object.values(updatedFields));
-            setUser({ ...user, ...updatedFields });
-            setEditModalVisible(false);
-            Alert.alert('Success', 'Profile updated successfully.');
-        } catch (error) {
-            Alert.alert('Error', 'Failed to update profile.');
-        }
-    };
-
-    if (checkingLogin) return <Text>Loading...</Text>;
+      
+            await createUser(db, name, email, password, dob, gender, phone);
+      
+            // Simulate login by storing userId (you could return ID from createUser if needed)
+            const newUser = users.length + 1; // rough estimate; in production, fetch actual ID
+            await AsyncStorage.setItem('loggedInUserId', newUser.toString());
+      
+            navigation.replace('ProfileMain');
+          } catch (e) {
+            console.error(e);
+            Alert.alert('Error', 'Failed to register');
+          }
+      };
+      
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {!user ? (
-                <>
-                    <TouchableField label="Login" onPress={() => navigation.navigate('Login')} />
-                    <TouchableField label="Register" onPress={() => navigation.navigate('Register')} />
-                </>
-            ) : (
-                <>
-                    <View style={styles.profileContainer}>
-                        <TouchableOpacity style={styles.editIcon} onPress={() => setEditModalVisible(true)}>
-                            <Icon name="edit-2" size={20} color="#333" />
-                        </TouchableOpacity>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={{ flex: 1 }}
+        >
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+            <Text style={[styles.header, { color: colors.text }]}>User Registration</Text>
 
-                        <View style={styles.profileRow}>
-                            <TouchableOpacity onPress={pickImage}>
-                                <Image source={user.profile_image ? { uri: user.profile_image } : defaultImage} style={styles.profileImage} />
-                            </TouchableOpacity>
+            <Text style={{ color: colors.text }}>Name</Text>
+            <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter your name"
+                placeholderTextColor={colors.text}
 
-                            <View style={styles.textInfo}>
-                                <Text style={styles.heading}>{user.name}</Text>
-                                <Text style={styles.infoText}>{user.email}</Text>
-                                <Text style={styles.infoText}>{user.gender}</Text>
-                            </View>
-                        </View>
-                    </View>
+            />
 
-                    <View style={styles.optionsContainer}>
-                        <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Booking', {screen: 'BookingHome'})}>
-                            <View style={styles.flatButtonContent}>
-                                <Icon name="calendar" size={20} color="#000" style={styles.leftIcon} />
-                                <Text style={styles.flatButtonText}>My Bookings</Text>
-                                <Icon name="chevron-right" size={20} color="#888" />
-                            </View>
-                        </TouchableOpacity>
+            <Text style={{ color: colors.text }}>Email</Text>
+            <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                placeholderTextColor={colors.text}
+            />
 
-                        <View style={styles.separator} />
+            <Text style={{ color: colors.text }}>Date of Birth</Text>
+            <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                value={dob}
+                onChangeText={setDob}
+                placeholder="Enter your date of birth (YYYY-MM-DD)"
+                placeholderTextColor={colors.text}
+            />
 
-                        <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate('Help')}>
-                            <View style={styles.flatButtonContent}>
-                                <Icon name="help-circle" size={20} color="#000" style={styles.leftIcon} />
-                                <Text style={styles.flatButtonText}>Help & Support</Text>
-                                <Icon name="chevron-right" size={20} color="#888" />
-                            </View>
-                        </TouchableOpacity>
+            <PickerWithLabel
+                selectedValue={gender}
+                onValueChange={(itemValue) => setGender(itemValue)}
+                items={[
+                  { key: 'Male', value: 'Male' },
+                  { key: 'Female', value: 'Female' },
+                  { key: 'nub', value: 'Others' },
+                ]}
+                label="Gender"
+            />
+            <Text style={{ color: colors.text }}>Phone Number</Text>
+            <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="Enter your phone number"
+                keyboardType="phone-pad"
+                placeholderTextColor={colors.text}
+            />
 
-                        <View style={styles.separator} />
-                    </View>
+            <TextInput 
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                value={password}
+                onChangeText={setPassword} 
+                placeholder="Password" 
+                secureTextEntry 
+                placeholderTextColor={colors.text}
+            />
 
-                    <Modal
-                        visible={editModalVisible}
-                        animationType="slide"
-                        transparent={true}
-                        onRequestClose={() => setEditModalVisible(false)}
-                    >
-                        <View style={styles.modalOverlay}>
-                            <View style={styles.modalContainer}>
-                                <Text style={styles.modalTitle}>Edit Profile</Text>
-                                <ScrollView>
-                                    <TextInput style={styles.input} placeholder="Name" onChangeText={(text) => setFormData({ ...formData, name: text })} />
-                                    <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" onChangeText={(text) => setFormData({ ...formData, email: text })} />
-                                    <TextInput style={styles.input} placeholder="Phone" keyboardType="phone-pad" onChangeText={(text) => setFormData({ ...formData, phone: text })} />
-                                    <TextInput style={styles.input} placeholder="DOB (YYYY-MM-DD)" onChangeText={(text) => setFormData({ ...formData, dob: text })} />
-                                    <PickerWithLabel
-                                        selectedValue={formData.gender ?? ''}
-                                        onValueChange={(val) => setFormData({ ...formData, gender: val })}
-                                        items={[
-                                            { key: 'default', value: 'Select Gender:', label: 'Select Gender', enabled: false },
-                                            { key: 'Male', value: 'Male', label: 'Male' },
-                                            { key: 'Female', value: 'Female', label: 'Female' },
-                                            { key: 'Other', value: 'Other', label: 'Other' },
-                                        ]}
-                                    />
-                                    <TextInput style={styles.input} placeholder="Old Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, oldPassword: text })} />
-                                    <TextInput style={styles.input} placeholder="New Password" secureTextEntry onChangeText={(text) => setFormData({ ...formData, newPassword: text })} />
-                                    <View style={styles.button}>
-                                        <Button style={styles.buttonText} title="Cancel" color="gray" onPress={() => setEditModalVisible(false)} />
-                                        <Button color={Platform.OS === 'ios' ? undefined : '#1b204b'} style={styles.buttonText} title="Save Changes" onPress={handleEditProfile} />
-                                    </View>
-                                </ScrollView>
-                            </View>
-                        </View>
-                    </Modal>
-                </>
-            )}
+            <TextInput 
+                style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword} 
+                placeholder="Confirm Password" 
+                secureTextEntry 
+                placeholderTextColor={colors.text}
+            />
+            <View style={{ marginBottom: 40 }}>
+                <Button title="Register" onPress={handleRegister} />
+            </View>
         </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#f9f9f9',
-        flexGrow: 1,
-        fontFamily: 'Nunito',
-    },
-    profileContainer: {
-        backgroundColor: '#ffffff',
-        borderRadius: 16,
         padding: 20,
-        marginBottom: 30,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 5,
+        justifyContent: 'flex-start',
     },
-    profileRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingLeft: 10,
-    },
-    textInfo: {
-        flex: 1,
-        paddingRight: 10,
-    },
-    heading: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#333',
-    },
-    infoText: {
-        fontSize: 16,
-        marginBottom: 4,
-        color: '#555',
-        fontFamily: 'Nunito',
-    },
-    profileImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginRight: 20,
-        borderWidth: 2,
-        borderColor: '#ddd',
-        backgroundColor: '#eee',
-    },
-    editIcon: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        padding: 5,
-        zIndex: 1,
-    },
-    optionsContainer: {
-        marginBottom: 30,
-    },
-    flatButton: {
-        backgroundColor: '#ffffff',
-        padding: 15,
-    },
-    flatButtonContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    separator: {
-        height: 1,
-        backgroundColor: '#ddd',
-    },
-    flatButtonText: {
-        color: '#333',
-        fontSize: 16,
-        margin: 10,
-        fontFamily: 'Nunito',
-        fontWeight: 'bold',
-    },
-    leftIcon: {
-        marginRight: 12,
-    },
-    rightIcon1: {
-        marginLeft: 195,
-    },
-    rightIcon2: {
-        marginLeft: 180,
-    },
-    rightIcon3: {
-        marginLeft: 235,
-    },
-    logoutButtonText: {
-        color: '#ff0000',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        padding: 20,
-    },
-    modalContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 20,
-        elevation: 5,
-        maxHeight: '90%',
-        fontFamily: 'Nunito'
-    },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
+    header: {
+        fontSize: 24,
+        marginBottom: 20,
         textAlign: 'center',
-        color: '#222',
     },
     input: {
-        borderWidth: 1,
+        height: 40,
         borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 10,
-        backgroundColor: '#fff',
-    },
-    button: {
-        flexDirection: 'row',
-        paddingLeft: 110,
-        gap: 10,
-        borderRadius: 12,
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
+        borderWidth: 1,
+        marginBottom: 12,
+        paddingLeft: 8,
+        borderRadius: 4,
     },
 });
 
-export default ProfileScreen;
+export default RegisterScreen;

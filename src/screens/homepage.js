@@ -70,6 +70,13 @@ const HomePage = () => {
     });
   };
 
+  const formatTime = (timeInt) => {
+    const timeStr = timeInt.toString().padStart(4, '0'); // e.g., "800" => "0800"
+    const hours = timeStr.slice(0, 2);
+    const minutes = timeStr.slice(2);
+    return `${hours}:${minutes}`;
+  };
+
   return (
     <View style={styles.container}>
       {maintenance && (
@@ -89,9 +96,9 @@ const HomePage = () => {
           <TouchableOpacity style={styles.routeItem} onPress={() => handleRoutePress(item)}>
             <Text style={styles.routeText}>From: {item.departure}</Text>
             <Text style={styles.routeText}>To: {item.destination}</Text>
-            <Text style={styles.routeText}>Time: {item.time}</Text>
+            <Text style={styles.routeText}>Time: {formatTime(item.time)}</Text>
             <Text style={styles.routeText}>Duration: {item.duration} mins</Text>
-            <Text style={styles.routeText}>Price: RM{item.price}</Text>
+            <Text style={styles.routeText}>Price: RM{item.price}.00</Text>
           </TouchableOpacity>
         )}
       />
@@ -101,14 +108,14 @@ const HomePage = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
     backgroundColor: '#fff',
   },
   banner: {
-    backgroundColor: '#fffae6',
-    borderColor: '#ffc107',
-    borderWidth: 1,
+    margin: 10,
+    backgroundColor: '#ffd4d4',
+    borderColor: '#fa2f2f',
+    borderWidth: 1.5,
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
@@ -117,19 +124,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 4,
+    color: "#000"
   },
   bannerText: {
     fontSize: 14,
+    color: "#1b204b"
   },
   title: {
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 10,
+    fontFamily: 'Nunito',
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 10
   },
   subtitle: {
     fontSize: 18,
     fontWeight: '500',
     marginBottom: 10,
+    fontFamily: 'Nunito',
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 10
   },
   routeItem: {
     backgroundColor: '#f1f1f1',
@@ -139,6 +156,7 @@ const styles = StyleSheet.create({
   },
   routeText: {
     fontSize: 14,
+    color: '#1b204b'
   },
 });
 

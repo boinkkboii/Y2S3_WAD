@@ -1,16 +1,10 @@
-export const formatted = ( inputDate : Date) => {
-    let day = inputDate.getDay();
-    let date = inputDate.getDate();
-    let month = inputDate.getMonth();
-    let year = inputDate.getFullYear();
-    let daysText = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let monthsText = [
-        'Jan','Feb','Mar','Apr','May','Jun',
-        'Jul','Aug','Sep','Oct','Nov','Dec'
-    ];
+export const formatted = (inputDate: Date): string => {
+  const year = inputDate.getFullYear();
+  const month = String(inputDate.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const day = String(inputDate.getDate()).padStart(2, '0');
 
-    return `${daysText[day]} ${date}-${monthsText[month]}`;
-}
+  return `${year}-${month}-${day}`;
+};
 
 export const formatTime = (timeInt : number): string => {
     if (typeof timeInt !== 'number' || isNaN(timeInt)) {

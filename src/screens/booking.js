@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const BookingScreen = () => {
   const [userId, setUserId] = useState(null);
+  const [booking, setBookings] =useState([]);
   const [futureBookings, setFutureBookings] = useState([]);
   const [pastBookings, setPastBookings] = useState([]);
   const navigation = useNavigation();
@@ -35,54 +36,37 @@ const BookingScreen = () => {
   );
 
   const separateBookings = (bookings) => {
-    const now = new Date(); // Get the current date and time
-    const currentYear = now.getFullYear(); // Get the current year dynamically
-  
+    const now = new Date();
     const future = [];
     const past = [];
-  
+
     bookings.forEach((b) => {
-      const dateParts = b.date.split(' ')[1].split('-'); // "14-May" -> ["14", "May"]
-      const day = dateParts[0]; // Day is the first part
-      const monthName = dateParts[1]; // Month name is the second part
-  
-      // Map the month name to a month number (0-based index)
-      const monthMap = {
-        Jan: 0,
-        Feb: 1,
-        Mar: 2,
-        Apr: 3,
-        May: 4,
-        Jun: 5,
-        Jul: 6,
-        Aug: 7,
-        Sep: 8,
-        Oct: 9,
-        Nov: 10,
-        Dec: 11,
-      };
-      const month = monthMap[monthName]; // Get the corresponding month number
-  
-      // Ensure all values are valid before creating the Date object
-      if (!month || isNaN(day)) return; // Skip invalid booking data
-  
-      const hours = Math.floor(b.time / 100); // Get hours
-      const minutes = b.time % 100; // Get minutes
-      const bookingDateTime = new Date(currentYear, month, day, hours, minutes); // Use currentYear
-  
-      // If the booking date is valid, separate into future or past
+      if (!b.date || typeof b.date !== 'string') {
+        return;
+      }
+
+      const [year, month, day] = b.date.split('-').map(Number); // "2025-08-31" -> [2025, 8, 31]
+      if (isNaN(year) || isNaN(month) || isNaN(day)) {
+        return;
+      }
+
+      const hours = Math.floor(b.time / 100); // 930 -> 9
+      const minutes = b.time % 100;           // 930 -> 30
+      const bookingDateTime = new Date(year, month - 1, day, hours, minutes); // month - 1 because JS months are 0-based
+
       if (bookingDateTime.getTime()) {
         if (bookingDateTime >= now) {
-          future.push(b); // Future booking
+          future.push(b);
         } else {
-          past.push(b); // Past booking
+          past.push(b);
         }
       }
     });
-  
+
     setFutureBookings(future);
     setPastBookings(past);
   };
+
 
   const formatTime = (timeInt) => {
     if (typeof timeInt !== 'number') return 'Invalid time';

@@ -48,33 +48,17 @@ const RegisterScreen = () => {
       
         try {
             const db = await getDBConnection();
-<<<<<<< HEAD
-      
-            // Check if email already exists
-=======
-
->>>>>>> 6fd33401679a7bf30398d973fbcb8ad69fea7361
             const users = await getUsers(db);
             const emailExists = users.some(user => user.email === email);
             if (emailExists) {
               Alert.alert('Error', 'Email already registered');
               return;
             }
-<<<<<<< HEAD
-      
-            await createUser(db, name, email, password, dob, gender, phone);
-      
-            // Simulate login by storing userId
-            const newUser = users.length + 1;
-            await AsyncStorage.setItem('loggedInUserId', newUser.toString());
-      
-=======
             
             // Simulate login by storing userId (you could return ID from createUser if needed)
             const newUserId = await createUser(db, name, email, password, dob, gender, phone);
             await AsyncStorage.setItem('loggedInUserId', newUserId.toString());
                 
->>>>>>> 6fd33401679a7bf30398d973fbcb8ad69fea7361
             navigation.replace('ProfileMain');
           } catch (e) {
             console.error(e);

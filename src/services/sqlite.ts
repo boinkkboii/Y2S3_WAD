@@ -41,7 +41,9 @@ export const getUserById = async (db: SQLiteDatabase, userId: string): Promise<a
   try {
     const query = `SELECT * FROM users WHERE id = ?`;
     const results = await db.executeSql(query, [userId]);
-    return results[0].rows.item(0);
+    const rows = results[0].rows;
+    if (rows.length === 0) return null;
+    return rows.item(0);
   } catch (error) {
     console.error(error);
     throw Error('Failed to fetch user!');
@@ -117,7 +119,7 @@ export const updateUserProfileImage = async (db: SQLiteDatabase, userId: string,
 export const getBookings = async (db: SQLiteDatabase): Promise<any[]> => {
   try {
     const bookings: any[] = [];
-    const query = `SELECT * FROM booking ORDER BY booking_id`;
+    const query = `SELECT * FROM bookings ORDER BY booking_id`;
     const results = await db.executeSql(query);
     results.forEach(result => {
       result.rows.raw().forEach((item: any) => bookings.push(item));
@@ -138,9 +140,12 @@ export const getBookingsForUser = async (
     const bookings: any[] = [];
 
     const query = `
-      SELECT * FROM booking
-      WHERE user_id = ?
-      ORDER BY date, time;
+      SELECT b.booking_id, b.user_id, b.route_id, b.no_of_passenger, b.date,
+             r.departure, r.destination, r.time, r.price, r.duration
+      FROM bookings b
+      JOIN routes r ON b.route_id = r.route_id
+      WHERE b.user_id = ?
+      ORDER BY b.date, r.time;
     `;
 
     const results = await db.executeSql(query, [userId]);
@@ -157,29 +162,45 @@ export const getBookingsForUser = async (
   }
 };
 
-export const getBookingDetailsById = async (db: SQLiteDatabase, bookingId: number) => {
+export const getBookingDetailsById = async (db: SQLiteDatabase, bookingId: number): Promise<any> => {
   try {
-    const results = await db.executeSql('SELECT * FROM booking WHERE booking_id = ?', [bookingId]);
-    const item = results[0].rows.item(0);
-    return item;
+    const query = `
+      SELECT 
+        b.*,  
+        r.time, 
+        r.departure, 
+        r.destination,
+        r.price,
+        r.duration
+      FROM bookings b
+      JOIN routes r ON b.route_id = r.route_id
+      WHERE b.booking_id = ?
+    `;
+    const results = await db.executeSql(query, [bookingId]);
+
+    if (results[0].rows.length === 0) return null;
+
+    return results[0].rows.item(0);
   } catch (error) {
     console.error(error);
-    throw Error('Failed to fetch booking detail!');
+    throw Error('Failed to fetch booking detail with route!');
   }
 };
 
+
 export const createBooking = async (
   db: SQLiteDatabase,
-  userId: number,
-  scheduleId: number,
-  noOfPassenger: number
+  user_id: number,
+  route_id: number,
+  no_of_passenger: number,
+  date: string
 ) => {
   try {
     const query = `
-      INSERT INTO booking(user_id, schedule_id, no_of_passenger)
-      VALUES (?, ?, ?)
+      INSERT INTO bookings (user_id, route_id, no_of_passenger, date)
+      VALUES (?, ?, ?, ?)
     `;
-    await db.executeSql(query, [userId, scheduleId, noOfPassenger]);
+    await db.executeSql(query, [user_id, route_id, no_of_passenger, date]);
   } catch (error) {
     console.error(error);
     throw Error('Failed to create booking!');
@@ -188,18 +209,17 @@ export const createBooking = async (
 
 export const updateBooking = async (
   db: SQLiteDatabase,
-  bookingId: string,
-  userId: number,
-  scheduleId: number,
-  noOfPassenger: number
+  booking_id: string,
+  date: string,
+  no_of_passenger: number
 ) => {
   try {
     const query = `
-      UPDATE booking 
-      SET user_id = ?, schedule_id = ?, no_of_passenger = ?
+      UPDATE bookings 
+      SET no_of_passenger = ?, date = ?
       WHERE booking_id = ?
     `;
-    await db.executeSql(query, [userId, scheduleId, noOfPassenger, bookingId]);
+    await db.executeSql(query, [no_of_passenger, date, booking_id]);
   } catch (error) {
     console.error(error);
     throw Error('Failed to update booking!');
@@ -208,10 +228,34 @@ export const updateBooking = async (
 
 export const deleteBooking = async (db: SQLiteDatabase, bookingId: string) => {
   try {
-    const query = `DELETE FROM booking WHERE booking_id = ?`;
+    const query = `DELETE FROM bookings WHERE booking_id = ?`;
     await db.executeSql(query, [bookingId]);
   } catch (error) {
     console.error(error);
     throw Error('Failed to delete booking!');
+  }
+};
+
+//Bus Stops function
+export const getBusStops = async (db: SQLiteDatabase): Promise<any[]> => {
+  try {
+    const query = `SELECT * FROM busStops ORDER BY name`;
+    const results = await db.executeSql(query);
+    return results.flatMap(result => result.rows.raw());
+  } catch (error) {
+    console.error(error);
+    throw Error ('Failed to get bus stops!')
+  }
+};
+
+//Routes function
+export const getRoutes = async (db: SQLiteDatabase): Promise<any[]> => {
+  try {
+    const query = `SELECT * FROM routes ORDER BY time`;
+    const results = await db.executeSql(query);
+    return results.flatMap(result => result.rows.raw());
+  } catch (error) {
+    console.error(error);
+    throw Error ('Failed to get routes!')
   }
 };

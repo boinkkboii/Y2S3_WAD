@@ -117,22 +117,6 @@ export const updateUserProfileImage = async (db: SQLiteDatabase, userId: string,
 };
 
 //Booking CRUD functions
-export const getBookings = async (db: SQLiteDatabase): Promise<any[]> => {
-  try {
-    const bookings: any[] = [];
-    const query = `SELECT * FROM bookings ORDER BY booking_id`;
-    const results = await db.executeSql(query);
-    results.forEach(result => {
-      result.rows.raw().forEach((item: any) => bookings.push(item));
-    });
-    return bookings;
-  } catch (error) {
-    console.error(error);
-    throw Error('Failed to fetch bookings!');
-  }
-};
-
-
 export const getBookingsForUser = async (
   db: SQLiteDatabase,
   userId: string

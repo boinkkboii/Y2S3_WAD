@@ -1,35 +1,38 @@
 /* eslint-disable prettier/prettier */
 // BookingScreen.js
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDBConnection, getBookingsForUser } from '../services/sqlite';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const BookingScreen = () => {
   const [userId, setUserId] = useState(null);
   const [bookings, setBookings] = useState([]);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const loadBookings = async () => {
-      try {
+  useFocusEffect(
+    useCallback(() => {
+      const loadBookings = async () => {
         const storedUserId = await AsyncStorage.getItem('loggedInUserId');
-        if (storedUserId) {
-          const id = parseInt(storedUserId, 10);
-          setUserId(id);
-
-          const db = await getDBConnection();
-          const result = await getBookingsForUser(db, id);
-          setBookings(result);
+        if (!storedUserId) {
+          Alert.alert('Error', 'Please log in to view your bookings.');
+          return;
         }
-      } catch (error) {
-        console.error('Error loading user bookings:', error);
-      }
-    };
+        setUserId(storedUserId); // Store the logged-in user ID
+        try {
+          const db = await getDBConnection();
+          const result = await getBookingsForUser(db, storedUserId);
+          setBookings(result);
+        } catch (error) {
+          console.error('Error loading user bookings:', error);
+          Alert.alert('Error', 'Failed to load bookings.');
+        }
+      };
 
-    loadBookings();
-  }, []);
+      loadBookings();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

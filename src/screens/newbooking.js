@@ -60,6 +60,7 @@ const NewBookingScreen = () => {
     };
 
     fetchStopsAndRoutes();
+    console.log(userId)
   }, []);
 
   const onSelectDateOption = (opt) => {

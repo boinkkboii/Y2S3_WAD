@@ -1,152 +1,161 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import { getRoutesData } from '../api/routes';        // Import routes API
-import { getAgencyData } from '../api/agency';        // Import agency API
-import { getCalendarData } from '../api/calendar';    // Import calendar API
-import { getStopTimesData } from '../api/stop_times'; // Import stop_times API
-import { getStopsData } from '../api/stops';          // Import stops API
-import { getTripsData } from '../api/trips';          // Import trips API
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import io from 'socket.io-client';
+import SQLite from 'react-native-sqlite-storage';
+import { useNavigation } from '@react-navigation/native';
+
+// Enable SQLite debugging if needed
+SQLite.enablePromise(true);
 
 const HomePage = () => {
-  const [routes, setRoutes] = useState('');
-  const [agency, setAgency] = useState('');
-  const [calendar, setCalendar] = useState('');
-  const [stopTimes, setStopTimes] = useState('');
-  const [stops, setStops] = useState('');
-  const [trips, setTrips] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [maintenance, setMaintenance] = useState(null);
+  const [routes, setRoutes] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        setLoading(true);
-        const routesData = await getRoutesData();
-        const agencyData = await getAgencyData();
-        const calendarData = await getCalendarData();
-        const stopTimesData = await getStopTimesData();
-        const stopsData = await getStopsData();
-        const tripsData = await getTripsData();
+    const socket = io('http://10.0.2.2:5000/maintenance', {
+      transports: ['websocket'],
+    });
 
-        setRoutes(routesData);
-        setAgency(agencyData);
-        setCalendar(calendarData);
-        setStopTimes(stopTimesData);
-        setStops(stopsData);
-        setTrips(tripsData);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      } finally {
-        setLoading(false);
+    socket.on('connect', () => {
+      console.log('Connected to maintenance namespace');
+      socket.emit('request_maintenance', { request: true });
+    });
+
+    socket.on('maintenance_alert', (data) => {
+      console.log('Maintenance Message:', data);
+      setMaintenance(data);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket');
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const loadRoutesFromDB = async () => {
+      try {
+        const db = await SQLite.openDatabase({
+          name: 'busApp.sqlite',
+          location: 'default',
+          createFromLocation: '~busApp.sqlite',
+        });
+
+        const [results] = await db.executeSql('SELECT * FROM routes');
+        const routeList = [];
+
+        for (let i = 0; i < results.rows.length; i++) {
+          routeList.push(results.rows.item(i));
+        }
+
+        setRoutes(routeList);
+        db.close();
+      } catch (error) {
+        console.error('Failed to load routes:', error);
       }
     };
 
-    fetchAllData();
+    loadRoutesFromDB();
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading data...</Text>
-      </View>
-    );
-  }
+  const handleRoutePress = (route) => {
+    navigation.navigate('NewBooking', {
+      departure: route.departure,
+      destination: route.destination,
+    });
+  };
+
+  const formatTime = (timeInt) => {
+    const timeStr = timeInt.toString().padStart(4, '0'); // e.g., "800" => "0800"
+    const hours = timeStr.slice(0, 2);
+    const minutes = timeStr.slice(2);
+    return `${hours}:${minutes}`;
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>API Data Overview</Text>
+    <View style={styles.container}>
+      {maintenance && (
+        <View style={styles.banner}>
+          <Text style={styles.bannerTitle}>{maintenance.title}</Text>
+          <Text style={styles.bannerText}>{maintenance.message}</Text>
+        </View>
+      )}
 
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Routes Data:</Text>
-        <Text style={styles.content}>{routes}</Text>
-      </View> */}
+      <Text style={styles.title}>Welcome to Bus Booking System</Text>
+      <Text style={styles.subtitle}>Available Routes:</Text>
 
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Agency Data:</Text>
-        <Text style={styles.content}>{agency}</Text>
-      </View> */}
-
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Calendar Data:</Text>
-        <Text style={styles.content}>{calendar}</Text>
-      </View> */}
-
-      {/* too many data and caused the app to crash */}
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Stop Times Data (First 200 entries):</Text>
-        <Text style={styles.content}>
-          {(() => {
-            try {
-              const parsed = JSON.parse(stopTimes);
-              const sliced = parsed.slice(0, 200);
-              return JSON.stringify(sliced, null, 2);
-            } catch (e) {
-              return stopTimes; // fallback in case parsing fails
-            }
-          })()}
-        </Text>
-      </View> */}
-
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Stops Data (First 200 entries):</Text>
-        <Text style={styles.content}>
-          {(() => {
-            try {
-              const parsed = JSON.parse(stops);
-              const sliced = parsed.slice(0, 200);
-              return JSON.stringify(sliced, null, 2);
-            } catch (e) {
-              return stops; // fallback if parsing fails
-            }
-          })()}
-        </Text>
-      </View> */}
-
-      <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Trips Data (First 200 entries):</Text>
-        <Text style={styles.content}>
-          {(() => {
-            try {
-              const parsed = JSON.parse(trips);
-              const sliced = parsed.slice(0, 200);
-              return JSON.stringify(sliced, null, 2);
-            } catch (e) {
-              return trips; // fallback if parsing fails
-            }
-          })()}
-        </Text>
-      </View>
-
-    </ScrollView>
+      <FlatList
+        data={routes}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={styles.routeItem} onPress={() => handleRoutePress(item)}>
+            <Text style={styles.routeText}>From: {item.departure}</Text>
+            <Text style={styles.routeText}>To: {item.destination}</Text>
+            <Text style={styles.routeText}>Time: {formatTime(item.time)}</Text>
+            <Text style={styles.routeText}>Duration: {item.duration} mins</Text>
+            <Text style={styles.routeText}>Price: RM{item.price}.00</Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
   );
 };
 
-export default HomePage;
-
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 16,
+    flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  section: {
+  banner: {
+    margin: 10,
+    backgroundColor: '#ffd4d4',
+    borderColor: '#fa2f2f',
+    borderWidth: 1.5,
+    padding: 12,
+    borderRadius: 8,
     marginBottom: 20,
   },
-  sectionHeader: {
-    fontSize: 18,
+  bannerTitle: {
     fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#2c3e50',
+    fontSize: 16,
+    marginBottom: 4,
+    color: '#000',
   },
-  content: {
+  bannerText: {
     fontSize: 14,
-    color: '#7f8c8d',
+    color: '#1b204b',
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 10,
+    fontFamily: 'Nunito',
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    marginBottom: 10,
+    fontFamily: 'Nunito',
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 10,
+  },
+  routeItem: {
+    backgroundColor: '#f1f1f1',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  routeText: {
+    fontSize: 14,
+    color: '#1b204b',
   },
 });
+
+export default HomePage;

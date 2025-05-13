@@ -1,13 +1,33 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import React, { useContext } from 'react';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
+import RootNavigator from './navigation/RootNavigator';
+import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 
-import DrawerNavigator from './navigation/DrawerNavigator';
+
+const AppContent = () => {
+  const { isDark } = useContext(ThemeContext);
+  return (
+    <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
+      <RootNavigator />
+    </NavigationContainer>
+  );
+};
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <DrawerNavigator />
-    </NavigationContainer>
+    <ThemeProvider>
+      <GestureHandlerRootView style={styles.container}>
+          <AppContent />
+      </GestureHandlerRootView>
+    </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

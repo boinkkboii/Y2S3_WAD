@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,34 +7,20 @@ import {
   ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import ContactUsScreen from './contactUs';
-
-const faqData = [
-  {
-    question: 'How do I book a ticket?',
-    answer:
-      'To book a ticket, select your route, choose a bus and seat, then proceed to payment.',
-  },
-  {
-    question: 'Can I cancel or reschedule my booking?',
-    answer:
-      'Yes, you can cancel or reschedule from the "My Bookings" section before the trip starts. Cancellation charges may apply.',
-  },
-  {
-    question: 'What if the bus is delayed?',
-    answer:
-      'You will be notified via SMS or app notification. We recommend arriving at the boarding point 15 minutes early.',
-  },
-  {
-    question: 'How do I contact customer support?',
-    answer:
-      'You can reach us 24/7 through the Help Center in the app or call our toll-free number: 1800-123-4567.',
-  },
-];
+import { loadFAQData } from '../services/json';
 
 const HelpScreen = () => {
+  const [faqData, setFaqData] = useState([]);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await loadFAQData();
+      setFaqData(data);
+    }
+    fetchData();
+  }, []);
 
   const toggleFAQ = index => {
     setExpandedIndex(prevIndex => (prevIndex === index ? null : index));

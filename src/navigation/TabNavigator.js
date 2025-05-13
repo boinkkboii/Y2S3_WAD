@@ -5,7 +5,6 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { CurvedBottomBar } from 'react-native-curved-bottom-bar';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-// import MenuScreen from '../screens/menu';
 import HomeScreen from '../screens/homepage';
 import BookingStack from '../navigation/BookingStack';
 import HelpScreen from '../screens/help';

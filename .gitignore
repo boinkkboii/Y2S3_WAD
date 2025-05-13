@@ -70,3 +70,6 @@ yarn-error.log
 *.tar.gz
 *.zip
 packages/
+
+# Ignore environment
+.env

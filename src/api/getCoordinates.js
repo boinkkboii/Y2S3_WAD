@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import axios from 'axios';
-
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBZrll3tgm2h-DrUnU91Rtg3Aw9_8tyY-c';
+import { GOOGLE_MAPS_API_KEY } from '@env';
 
 const getCoordinates = async placeName => {
   try {

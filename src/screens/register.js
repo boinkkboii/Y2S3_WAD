@@ -57,7 +57,7 @@ const RegisterScreen = () => {
             
             // Simulate login by storing userId (you could return ID from createUser if needed)
             const newUserId = await createUser(db, name, email, password, dob, gender, phone);
-            await AsyncStorage.setItem('loggedInUserId', newUserId.toString());
+            await AsyncStorage.setItem('loggedInUserId', String(newUserId));
                 
             navigation.replace('ProfileMain');
           } catch (e) {
@@ -104,9 +104,10 @@ const RegisterScreen = () => {
                 selectedValue={gender}
                 onValueChange={(itemValue) => setGender(itemValue)}
                 items={[
-                  { key: 'Male', value: 'Male' },
-                  { key: 'Female', value: 'Female' },
-                  { key: 'nub', value: 'Others' },
+                    { value: 'Select Gender:', label: 'Select Gender:', enabled: false },
+                    { value: 'Male', label: 'Male' },
+                    { value: 'Female', label: 'Female' },
+                    { value: 'nub', label: 'Other' },
                 ]}
                 label="Gender"
             />

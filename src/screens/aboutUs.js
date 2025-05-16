@@ -17,7 +17,7 @@ const AboutUsScreen = () => {
       <Text style={styles.title}>About Us</Text>
 
       <Text style={styles.text}>
-        Welcome to EasyBus, your trusted partner for convenient and reliable bus
+        Welcome to MyBus, your trusted partner for convenient and reliable bus
         bookings. We are committed to making your travel experience smooth and
         stress-free.
       </Text>

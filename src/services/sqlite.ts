@@ -66,7 +66,15 @@ export const createUser = async (
       VALUES (?, ?, ?, ?, ?, ?)
     `;
     const params = [name, email, password, dob, gender, phone];
-    await db.executeSql(query, params);
+    const result = await db.executeSql(query, params);
+
+    const insertId = result[0]?.insertId;
+
+    if (typeof insertId !== 'number') {
+      throw new Error('Insert ID not returned');
+    }
+
+    return insertId;
   } catch (error) {
     console.error(error);
     throw Error('Failed to create user!');

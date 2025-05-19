@@ -14,7 +14,7 @@ const HomePage = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const socket = io('http://10.0.2.2:5000/maintenance', {
+    const socket = io('http://192.168.0.4:5000/maintenance', {
       transports: ['websocket'],
     });
 

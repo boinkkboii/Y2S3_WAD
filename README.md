@@ -71,8 +71,8 @@ Displays current weather and temperature at the **destination stop** upon route 
 
 ```bash
 # Clone the repository
-git clone https://github.com/boinkkboii/bus-booking-app.git
-cd bus-booking-app
+git clone https://github.com/boinkkboii/Y2S3_WAD.git
+cd Y2S3_WAD
 
 # Install dependencies
 npm install

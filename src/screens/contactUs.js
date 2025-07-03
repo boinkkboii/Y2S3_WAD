@@ -37,7 +37,7 @@ const ContactUs = () => {
     
     if (contactMethod === 'phone') {
       // Open dialer with number
-      Linking.openURL('tel:+1234567890');
+      Linking.openURL('tel:+1800-123-4567');
     } else {
       // Open default mail app with email address
       Linking.openURL('mailto:mybus@mybus.my');
@@ -132,7 +132,7 @@ const ContactUs = () => {
               style={styles.modalButton}
               onPress={() => handleContactChoice('phone')}
             >
-              <Text style={styles.modalButtonText}>Phone: +123 456 7890</Text>
+              <Text style={styles.modalButtonText}>Phone: +1800-123-4567</Text>
             </TouchableOpacity>
 
             {/* Email Option */}

@@ -7,7 +7,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const BookingScreen = () => {
   const [userId, setUserId] = useState(null);
-  const [booking, setBookings] =useState([]);
   const [futureBookings, setFutureBookings] = useState([]);
   const [pastBookings, setPastBookings] = useState([]);
   const navigation = useNavigation();
@@ -67,7 +66,6 @@ const BookingScreen = () => {
     setPastBookings(past);
   };
 
-
   const formatTime = (timeInt) => {
     if (typeof timeInt !== 'number') return 'Invalid time';
     const hours = Math.floor(timeInt / 100);
@@ -79,7 +77,7 @@ const BookingScreen = () => {
     <View style={styles.container}>
       {futureBookings.length > 0 && (
         <View style={styles.bookingsSection}>
-          <Text style={styles.sectionTitle}>Future Bookings</Text>
+          <Text style={styles.sectionTitle}>Current Bookings</Text>
           <FlatList
             data={futureBookings}
             keyExtractor={(item) => item.booking_id.toString()}

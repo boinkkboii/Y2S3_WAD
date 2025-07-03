@@ -43,16 +43,16 @@ Displays current weather and temperature at the **destination stop** upon route 
 
 ## Tech Stack
 
-| Area             | Technology                           |
-|------------------|--------------------------------------|
-| Framework        | React Native                         |
-| Language         | TypeScript                           |
+| Area             | Technology                             |
+|------------------|--------------------------------------- |
+| Framework        | React Native                           |
+| Language         | TypeScript                             |
 | Database         | SQLite (`react-native-sqlite-storage`) |
-| UI Components    | React Native Paper, Vector Icons     |
-| APIs             | OpenCage Geocoding / OpenWeatherMap  |
-| Storage          | AsyncStorage                         |
-| Navigation       | React Navigation                     |
-| Maps (optional)  | `react-native-maps` or WebView Map   |
+| UI Components    | React Native Paper, Vector Icons       |
+| APIs             | OpenCage Geocoding / OpenWeatherMap    |
+| Storage          | AsyncStorage                           |
+| Navigation       | React Navigation                       |
+| Maps (optional)  | `react-native-maps`                    |
 
 ---
 
@@ -65,13 +65,13 @@ Displays current weather and temperature at the **destination stop** upon route 
 - Android Studio + Android Virtual Device (AVD)
 - API keys for:
   - OpenWeatherMap: https://openweathermap.org/api
-  - OpenCage (or Google Maps Geocoding): https://opencagedata.com/api
+  - Google Maps Geocoding: https://maps.googleapis.com/maps/api/geocode
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/bus-booking-app.git
+git clone https://github.com/boinkkboii/bus-booking-app.git
 cd bus-booking-app
 
 # Install dependencies
